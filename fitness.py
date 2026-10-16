@@ -148,3 +148,31 @@ def weighted_fitness(x, inst, w=(0.5, 0.5), ref=(1.0, 1.0), penalty=1e4):
     `ref` are normalisation constants (e.g. best values from a pilot run)."""
     F1, F2 = fitness(x, inst, penalty)
     return w[0] * F1 / ref[0] + w[1] * F2 / ref[1]
+
+
+def combined_objective(result: Result, inst: Instance, alpha: float = 0.5) -> float:
+    """Report's scalar objective: alpha*f1/T_max + (1-alpha)*f2/sum(B_k).
+
+    The mission deadline must be finite: if T_max is infinity, the makespan
+    term would silently become zero and the objective would be incorrect.
+    """
+    if not (0.0 <= alpha <= 1.0):
+        raise ValueError("alpha must lie between 0 and 1")
+    if not np.isfinite(inst.t_max) or inst.t_max <= 0:
+        raise ValueError("combined objective requires a positive finite t_max")
+    total_battery = float(inst.battery.sum())
+    if total_battery <= 0 or not np.isfinite(total_battery):
+        raise ValueError("total battery capacity must be positive and finite")
+    return float(alpha * result.f1 / inst.t_max
+                 + (1.0 - alpha) * result.f2 / total_battery)
+
+
+def sa_fitness(result: Result, inst: Instance, alpha: float = 0.5,
+               penalty: float = 100.0) -> float:
+    """Scalar cost to minimize in SA; infeasibility is penalized additively.
+
+    In feasible states this equals the exact combined objective in the report.
+    """
+    if penalty < 0 or not np.isfinite(penalty):
+        raise ValueError("penalty must be finite and nonnegative")
+    return combined_objective(result, inst, alpha) + penalty * result.violation

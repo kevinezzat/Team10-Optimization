@@ -1,0 +1,83 @@
+{
+  "instance": {
+    "n": 30,
+    "ugvs": 2,
+    "uavs": 3,
+    "instance_seed": 0,
+    "sa_seed": 1,
+    "deadline_seconds": 1800.0,
+    "battery_kJ_by_vehicle": [
+      790.5647499145159,
+      790.5647499145159,
+      205.87623695690516,
+      205.87623695690516,
+      205.87623695690516
+    ]
+  },
+  "sa_config": {
+    "iterations": 12000,
+    "initial_temperature": 0.08,
+    "cooling_rate": 0.9995,
+    "penalty": 100.0,
+    "alpha": 0.5,
+    "construction_restarts": 100
+  },
+  "results": {
+    "initial_F": 0.22690844777653563,
+    "best_F": 0.1790990501030665,
+    "improvement_percent": 21.06990644991448,
+    "makespan_seconds": 432.3148792412658,
+    "energy_kJ": 259.50440814117303,
+    "violation": 0.0,
+    "accepted_moves": 3960,
+    "attempted_moves": 12000,
+    "execution_seconds": 1.557693667,
+    "routes": [
+      [],
+      [
+        21,
+        1,
+        18
+      ],
+      [
+        22,
+        8,
+        26,
+        20,
+        9,
+        14,
+        3,
+        12,
+        29
+      ],
+      [
+        13,
+        16,
+        15,
+        4,
+        5,
+        19,
+        23,
+        25,
+        17
+      ],
+      [
+        27,
+        7,
+        6,
+        28,
+        30,
+        2,
+        11,
+        10,
+        24
+      ]
+    ],
+    "constraints": {
+      "g_capability": 0.0,
+      "g_payload": 0.0,
+      "g_energy": 0.0,
+      "g_deadline": 0.0
+    }
+  }
+}
