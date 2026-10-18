@@ -1,0 +1,9 @@
+{
+  "name": "synthetic-eight-customer-cvrp",
+  "source": "Original deterministic test fixture created for this repository; not a published benchmark.",
+  "coordinates": [[0,0],[1,0],[2,0],[2,2],[0,2],[-1,0],[-2,0],[-2,-2],[0,-2]],
+  "demands": [1,1,1,1,1,1,1,1],
+  "vehicles": 2,
+  "capacity": 4,
+  "distance_convention": "Unrounded Euclidean distance"
+}

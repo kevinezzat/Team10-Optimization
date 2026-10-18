@@ -21,6 +21,7 @@ from fitness import evaluate, fitness
 
 
 def plot_routes(inst, result, fname):
+    """Save the best random-search route geometry."""
     fig, ax = plt.subplots(figsize=(7, 7))
     marker = {0: "o", UGV_ONLY: "s", UAV_ONLY: "^"}
     label = {0: "Any", UGV_ONLY: "UGV-only", UAV_ONLY: "UAV-only"}
@@ -47,6 +48,7 @@ def plot_routes(inst, result, fname):
 
 
 def main():
+    """Demonstrate decoding, evaluation, and pure random-key sampling."""
     n, m_g, m_a = (int(a) for a in sys.argv[1:4]) if len(sys.argv) >= 4 else (30, 2, 3)
     inst = generate_instance(n=n, m_g=m_g, m_a=m_a, seed=0)
     rng = np.random.default_rng(1)
