@@ -57,7 +57,8 @@ def decode(x: np.ndarray, inst: Instance):
     """
     n, m = inst.n, inst.m
     x = np.asarray(x, dtype=float)
-    assert x.size == 2 * n, f"x must have length 2n = {2 * n}"
+    if x.shape != (2*n,) or not np.isfinite(x).all() or np.any((x < 0) | (x > 1)):
+        raise ValueError(f'x must be a finite vector of length {2*n} in [0, 1]')
 
     vehicle = np.minimum((x[:n] * m).astype(int), m - 1)     # a_i
     order = np.argsort(x[n:], kind="stable")                 # global ordering

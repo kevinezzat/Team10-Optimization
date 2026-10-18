@@ -4,8 +4,8 @@ Reuse `instance.Instance`, `fitness.decode`, and `fitness.evaluate` unchanged.
 All solutions are encoded as the same 2*n random-key vectors used in Milestone 2.
 The neighborhood is generated in route-space, then encoded back into keys.
 """
-from dataclasses import dataclass
-import math
+from __future__ import annotations
+from dataclasses import dataclass, asdict, field
 
 import numpy as np
 
@@ -16,16 +16,55 @@ from instance import Instance, UGV_ONLY, UAV_ONLY
 
 @dataclass(frozen=True)
 class SAConfig:
+    """Validated immutable search settings; temperatures use penalized cost units."""
     iterations: int = 12000
-    initial_temperature: float = 0.08
+    initial_temperature: float | None = None
     cooling_rate: float = 0.9995
     penalty: float = 100.0
     alpha: float = 0.5
     construction_restarts: int = 100
+    final_temperature: float = 1e-5
+    derive_cooling: bool = True
+    calibration_samples: int = 200
+    target_acceptance: float = 0.8
+    operators: tuple[str, ...] = ('relocate', 'swap', 'two_opt', 'intra_swap', 'or_opt')
+    adaptive_operators: bool = False
+    adaptive_penalty: bool = False
+    stagnation_window: int = 1000
+    reheat: bool = False
+    n_restarts: int = 1
+    acceptance_window: int = 100
+    hill_climbing: bool = False
+
+    def __post_init__(self):
+        """Reject invalid settings before starting any expensive computation."""
+        for name in ('iterations', 'construction_restarts', 'calibration_samples',
+                     'stagnation_window', 'n_restarts', 'acceptance_window'):
+            value = getattr(self, name)
+            if type(value) is not int or value < 1:
+                raise ValueError(f'{name} must be a positive integer')
+        for name in ('final_temperature', 'initial_temperature'):
+            value = getattr(self, name)
+            if value is None and name == 'initial_temperature':
+                continue
+            if not np.isfinite(value) or value <= 0:
+                raise ValueError(f'{name} must be positive and finite')
+        if not 0 < self.cooling_rate < 1 or not 0 < self.target_acceptance < 1:
+            raise ValueError('cooling rate and target acceptance must be in (0, 1)')
+        if not 0 <= self.alpha <= 1 or not np.isfinite(self.penalty) or self.penalty < 0:
+            raise ValueError('invalid alpha or penalty')
+        allowed = {'relocate', 'swap', 'two_opt', 'intra_swap', 'or_opt'}
+        if not self.operators or len(set(self.operators)) != len(self.operators) or not set(self.operators) <= allowed:
+            raise ValueError('operators must be distinct supported names')
+
+    def to_dict(self):
+        """Return a JSON-serializable configuration."""
+        return asdict(self)
 
 
 @dataclass
 class SAResult:
+    """Search outcome, with complete histories for the selected independent chain."""
     initial_x: np.ndarray
     initial_result: Result
     best_x: np.ndarray
@@ -34,6 +73,17 @@ class SAResult:
     current_history: np.ndarray
     accepted: int
     attempted: int
+    temperature_history: np.ndarray = field(default_factory=lambda: np.array([]))
+    acceptance_history: np.ndarray = field(default_factory=lambda: np.array([]))
+    operator_stats: dict = field(default_factory=dict)
+    evaluations: int = 0
+    wall_time: float = 0.0
+    feasible: bool = False
+    config: dict = field(default_factory=dict)
+    seed: int = 1
+    best_chain: int = 0
+    failed_moves: int = 0
+    snapshots: list = field(default_factory=list)
 
 
 def compatible(inst: Instance, k: int, task: int) -> bool:
@@ -60,7 +110,7 @@ def encode_routes(routes: list[list[int]], inst: Instance) -> np.ndarray:
     return x
 
 
-def _construct(inst: Instance, rng: np.random.Generator) -> np.ndarray:
+def _construct(inst: Instance, rng: np.random.Generator, alpha: float = .5) -> np.ndarray:
     """Greedy randomized, capability-aware insertion into vehicle routes.
 
     Hard resources are checked for each insertion. If no feasible insertion is
@@ -80,18 +130,25 @@ def _construct(inst: Instance, rng: np.random.Generator) -> np.ndarray:
             if not compatible(inst, k, task):
                 continue
             before = metrics[k]
-            for pos in range(len(routes[k]) + 1):
-                updated_route = routes[k][:pos] + [task] + routes[k][pos:]
-                after = route_metrics(k, updated_route, inst)
-                excess = (max(0.0, after['load'] - inst.payload[k]) / inst.payload[k]
-                          + max(0.0, after['energy'] - inst.battery[k]) / inst.battery[k]
-                          + max(0.0, after['time'] - inst.t_max) / inst.t_max)
-                # Prefer feasible insertions first, then the least incremental
-                # energy/time increase; jitter yields diverse SA restarts.
-                delta = (0.5 * (after['time'] - before['time']) / inst.t_max
-                         + 0.5 * (after['energy'] - before['energy']) / battery_total)
-                score = (excess > 1e-10, excess, delta + rng.uniform(0.0, 0.002))
-                choices.append((score, k, pos, updated_route, after))
+            # Vectorized edge deltas score every insertion without rebuilding tours.
+            seq = np.asarray([0]+routes[k]+[0])
+            matrix = inst.dist(k)
+            extra = matrix[seq[:-1], task]+matrix[task, seq[1:]]-matrix[seq[:-1], seq[1:]]
+            times = before['time']+extra/inst.speed[k]+inst.service[task-1]
+            energies = before['energy']+extra*inst.e_rate[k]
+            load = before['load']+inst.demand[task-1]
+            excess = (max(0., load-inst.payload[k])/inst.payload[k]
+                      + np.maximum(0., energies-inst.battery[k])/inst.battery[k]
+                      + np.maximum(0., times-inst.t_max)/inst.t_max)
+            delta = (alpha*(times-before['time'])/inst.t_max
+                     + (1-alpha)*(energies-before['energy'])/battery_total
+                     + rng.uniform(0., .002, size=len(extra)))
+            pos = int(np.lexsort((delta, excess, excess > 1e-10))[0])
+            after = dict(dist=before['dist']+extra[pos], time=times[pos],
+                         energy=energies[pos], load=load)
+            score = (excess[pos] > 1e-10, excess[pos], delta[pos])
+            updated_route = routes[k][:pos]+[task]+routes[k][pos:]
+            choices.append((score, k, pos, updated_route, after))
         if not choices:
             raise ValueError(f"task {task} has no compatible vehicle")
         _, k, _, new_route, new_metrics = min(choices, key=lambda v: v[0])
@@ -105,103 +162,30 @@ def initial_solution(inst: Instance, rng: np.random.Generator,
     """Find the best of several randomized greedy starts, preferring feasible."""
     if restarts < 1:
         raise ValueError("construction_restarts must be >= 1")
-    best_x, best_result, best_score = None, None, float('inf')
+    best_x, best_result, best_score = None, None, (True, float('inf'), float('inf'))
     for _ in range(restarts):
-        x = _construct(inst, rng)
+        x = _construct(inst, rng, alpha)
         r = evaluate(x, inst)
-        score = sa_fitness(r, inst, alpha, penalty)
+        score = (r.violation > 1e-9, r.violation if r.violation > 1e-9 else 0., combined_objective(r, inst, alpha))
         if score < best_score:
             best_x, best_result, best_score = x, r, score
     return best_x, best_result
 
 
 def neighbor(x: np.ndarray, inst: Instance, rng: np.random.Generator) -> np.ndarray:
-    """Move a task, swap tasks, or reverse part of a route.
-
-    Capability is preserved (so g1 always remains 0). Payload, battery and
-    deadlines are still checked by `evaluate`; SA penalizes violations.
-    """
-    old = decode(x, inst)
-    for _ in range(40):
-        routes = [r.copy() for r in old]
-        operation = int(rng.integers(3))
-        if operation == 0:  # relocate any task to another compatible vehicle
-            sources = [k for k, route in enumerate(routes) if route]
-            src = int(rng.choice(sources))
-            src_pos = int(rng.integers(len(routes[src])))
-            task = routes[src][src_pos]
-            targets = [k for k in range(inst.m) if k != src and compatible(inst, k, task)]
-            if not targets:
-                continue
-            dst = int(rng.choice(targets))
-            routes[src].pop(src_pos)
-            dst_pos = int(rng.integers(len(routes[dst]) + 1))
-            routes[dst].insert(dst_pos, task)
-        elif operation == 1:  # cross-vehicle exchange
-            sources = [k for k, route in enumerate(routes) if route]
-            if len(sources) < 2:
-                continue
-            a, b = rng.choice(sources, size=2, replace=False)
-            a, b = int(a), int(b)
-            ia, ib = int(rng.integers(len(routes[a]))), int(rng.integers(len(routes[b])))
-            ta, tb = routes[a][ia], routes[b][ib]
-            if not (compatible(inst, a, tb) and compatible(inst, b, ta)):
-                continue
-            routes[a][ia], routes[b][ib] = tb, ta
-        else:  # 2-opt reversal within a route
-            sources = [k for k, route in enumerate(routes) if len(route) >= 2]
-            if not sources:
-                continue
-            k = int(rng.choice(sources))
-            i, j = sorted(rng.choice(len(routes[k]), size=2, replace=False))
-            routes[k][int(i):int(j) + 1] = routes[k][int(i):int(j) + 1][::-1]
-        return encode_routes(routes, inst)
-    return x.copy()  # no compatible modification available
+    """Compatibility adapter for callers using random keys; SA uses route states."""
+    from sa_engine import RouteState, propose
+    state = RouteState(decode(x, inst), inst)
+    for op in rng.permutation(SAConfig().operators):
+        for _ in range(8):
+            candidate = propose(state, inst, rng, op)
+            if candidate is not None:
+                return encode_routes(candidate.routes, inst)
+    return x.copy()
 
 
 def simulated_annealing(inst: Instance, config: SAConfig = SAConfig(),
                         seed: int = 1) -> SAResult:
-    """Minimize the report's combined objective with a Metropolis SA search.
-
-    The best feasible solution is tracked separately from the current state.
-    Return a solution only if one satisfying all four constraints was found.
-    """
-    if not isinstance(config.iterations, int) or config.iterations < 1:
-        raise ValueError("iterations must be a positive integer")
-    if not (0 < config.cooling_rate < 1):
-        raise ValueError("cooling_rate must lie strictly between 0 and 1")
-    if not np.isfinite(config.initial_temperature) or config.initial_temperature <= 0:
-        raise ValueError("initial_temperature must be positive and finite")
-    # Fail clearly instead of losing the makespan term when t_max is infinity.
-    combined_objective(evaluate(np.full(2 * inst.n, 0.5), inst), inst, config.alpha)
-    rng = np.random.default_rng(seed)
-    current_x, current_r = initial_solution(inst, rng, config.construction_restarts,
-                                            config.alpha, config.penalty)
-    initial_x, initial_r = current_x.copy(), current_r
-    current_score = sa_fitness(current_r, inst, config.alpha, config.penalty)
-    best_x, best_r = (current_x.copy(), current_r) if current_r.violation <= 1e-10 else (None, None)
-    best_cost = (combined_objective(best_r, inst, config.alpha)
-                 if best_r is not None else float('inf'))
-
-    best_hist = np.empty(config.iterations + 1)
-    current_hist = np.empty(config.iterations + 1)
-    best_hist[0], current_hist[0] = best_cost, current_score
-    temperature, accepted = config.initial_temperature, 0
-    for iteration in range(1, config.iterations + 1):
-        candidate_x = neighbor(current_x, inst, rng)
-        candidate_r = evaluate(candidate_x, inst)
-        candidate_score = sa_fitness(candidate_r, inst, config.alpha, config.penalty)
-        delta = candidate_score - current_score
-        if delta <= 0 or rng.random() < math.exp(-delta / temperature):
-            current_x, current_r, current_score = candidate_x, candidate_r, candidate_score
-            accepted += 1
-        if current_r.violation <= 1e-10:
-            cost = combined_objective(current_r, inst, config.alpha)
-            if cost < best_cost:
-                best_x, best_r, best_cost = current_x.copy(), current_r, cost
-        best_hist[iteration], current_hist[iteration] = best_cost, current_score
-        temperature *= config.cooling_rate
-    if best_r is None:
-        raise RuntimeError("SA did not find a feasible solution: relax instance limits or increase restarts")
-    return SAResult(initial_x, initial_r, best_x, best_r, best_hist,
-                    current_hist, accepted, config.iterations)
+    """Minimize the report objective; return the least violation if infeasible."""
+    from sa_engine import run
+    return run(inst, config, seed)

@@ -32,6 +32,7 @@ ANY, UGV_ONLY, UAV_ONLY = 0, 1, 2
 
 @dataclass
 class Instance:
+    """Fixed geometry, task attributes, resource limits, and vehicle-type distances."""
     # ---- tasks (index 0 is reserved for the depot in the matrices) ----
     n: int                  # number of tasks
     coords: np.ndarray      # (n+1, 2) depot at row 0, task i at row i (1..n)
@@ -53,9 +54,11 @@ class Instance:
 
     @property
     def m(self) -> int:
+        """Total number of ground and aerial vehicles."""
         return self.m_g + self.m_a
 
     def is_uav(self, k: int) -> bool:
+        """Whether the vehicle belongs to the aerial fleet."""
         return k >= self.m_g
 
     def dist(self, k: int) -> np.ndarray:
@@ -69,8 +72,8 @@ def generate_instance(n=30, m_g=2, m_a=3, seed=0, area=1000.0,
     """
     Random instance generator (valid for ANY problem size n, m_g, m_a).
 
-    Capacities / batteries are scaled with the problem size so that
-    feasible solutions exist for every (n, m_g, m_a).
+    Capacities / batteries are scaled with problem size heuristically.
+    This is not a feasibility guarantee, especially with tight deadlines.
 
     Parameters
     ----------
@@ -84,6 +87,14 @@ def generate_instance(n=30, m_g=2, m_a=3, seed=0, area=1000.0,
                  (Wang et al. 2024 use 1.2)
     t_max      : mission deadline [s]
     """
+    if type(n) is not int or n < 1 or min(m_g, m_a) < 0 or m_g+m_a < 1:
+        raise ValueError('positive task count and nonempty nonnegative fleet required')
+    if not np.isfinite(area) or area <= 0 or ugv_detour < 1:
+        raise ValueError('area must be positive and detour at least one')
+    if min(p_ugv_only, p_uav_only) < 0 or p_ugv_only+p_uav_only > 1:
+        raise ValueError('invalid task-type probabilities')
+    if t_max <= 0 or np.isnan(t_max):
+        raise ValueError('deadline must be positive')
     rng = np.random.default_rng(seed)
     m = m_g + m_a
 
