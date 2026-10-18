@@ -1,0 +1,292 @@
+\chapter{Methodology}\label{chap:Methodology}
+
+In cooperative multi-robot missions involving ground and aerial vehicles, the physical motion of \ac{ugv} units is governed by non-holonomic kinematic constraints. Equation \eqref{eq:1} describes the kinematic model of a unicycle-type ground vehicle:
+
+\begin{equation} \label{eq:1}
+\dot{q_i} = 
+\begin{bmatrix}
+	\dot{x_i}\\
+	\dot{y_i}\\
+	\dot{\varphi_i}
+\end{bmatrix}
+=
+S_{1}(q_i)u_i
+ \quad , \quad
+  u_i = 
+\begin{bmatrix}
+	v_i\\
+	\omega_i
+\end{bmatrix}
+ \quad and \quad
+S_{1}(q_i) = 
+\begin{bmatrix}
+	\cos\varphi_i & 0\\
+	\sin\varphi_i & 0\\
+	0 & 1
+\end{bmatrix}
+\end{equation}
+where $q_i = [x_i, y_i, \varphi_i]^T$ represents the planar position and heading angle of robot $i$, and $u_i = [v_i, \omega_i]^T$ denotes its linear and angular velocity inputs. For high-level combinatorial task allocation and fleet routing over extensive mission domains ($1000 \times 1000\,\text{m}^2$), continuous integration of low-level steering commands is computationally prohibitive during iterative metaheuristic search. Consequently, kinematic maneuvering and terrain obstacles are modeled by defining a nominal cruise velocity $v_k$ and applying a ground detour factor $\eta_{\text{ugv}} \ge 1.0$ (set to $1.2$, following established cooperative routing literature \cite{wang}) to Euclidean distances, thereby reflecting realistic ground transit without sacrificing optimization throughput.
+
+\section{Relation to Project Statement and Objectives}
+The core objective of this project is to coordinate a heterogeneous fleet of Unmanned Aerial Vehicles (UAVs) and Unmanned Ground Vehicles (UGVs) to perform a set of geographically distributed tasks efficiently. To achieve high operational efficacy, the system must address two coupled sub-problems simultaneously:
+\begin{enumerate}
+    \item \textbf{Task Allocation:} Deciding which vehicle (UAV or UGV) is responsible for each specific task based on vehicle capabilities and task demands.
+    \item \textbf{Routing and Scheduling:} Ordering the assigned tasks for each vehicle into a feasible path starting and ending at the central depot to minimize overall mission duration and energy usage.
+\end{enumerate}
+
+The mathematical formulation directly maps to these objectives by optimizing a multi-objective trade-off between total completion time (\textit{makespan}) and cumulative fleet energy consumption while respecting physical hardware and mission boundaries.
+
+\section{System Assumptions}
+To model the heterogeneous UAV-UGV system realistically while maintaining computational tractability for metaheuristic optimization, the following assumptions are established:
+\begin{enumerate}
+    \item \textbf{Depot Operations:} All UAVs and UGVs originate from and must return to a single central depot (node $0$).
+    \item \textbf{Constant Vehicle Speeds:} Each vehicle $k$ travels at a constant average nominal cruise speed $v_k$, accounting for acceleration/deceleration phases implicitly in service times.
+    \item \textbf{Linear Energy Consumption Model:} Energy consumption for vehicle $k$ scales linearly with total distance traveled ($E_k = e_k \cdot D_k$), where $e_k$ is the vehicle's specific energy rate per meter.
+    \item \textbf{Deterministic Service Times and Demands:} Each task $i$ has a known service duration $s_i$ and payload demand $q_i$.
+    \item \textbf{Single Visit Requirement:} Every task $i \in \{1, \dots, n\}$ must be visited and completed exactly once by a single capable vehicle.
+
+    \item \textbf{Battery Capacity Assumption:}
+    All vehicles of the same type are assumed to have identical battery capacities. Specifically, all UAVs share a common battery capacity $B_{\text{UAV}}$, while all UGVs share a common battery capacity $B_{\text{UGV}}$.
+
+    The two vehicle types may have different battery capacities due to their distinct physical characteristics. Each vehicle must complete its assigned route without exceeding its respective battery capacity.
+
+    The battery capacity of vehicle $k$ is therefore defined as:
+    \begin{equation}
+        B_k =
+        \begin{cases}
+            B_{\text{UAV}}, & \text{if vehicle } k \text{ is a UAV} \\
+            B_{\text{UGV}}, & \text{if vehicle } k \text{ is a UGV}
+        \end{cases}
+    \end{equation}
+
+\end{enumerate}
+
+\section{Mathematical Problem Formulation}
+
+\subsubsection{Decision Variables}
+To enable continuous metaheuristics (e.g., Genetic Algorithms, Particle Swarm Optimization) to solve discrete allocation and routing tasks, a \textit{Random-Key Encoding} scheme is used. A decision vector $\mathbf{x} \in [0, 1]^{2n}$ represents a solution for $n$ tasks and $m$ vehicles:
+\begin{itemize}
+    \item \textbf{Allocation Keys ($\mathbf{x}[0:n]$):} Maps each task $i \in \{1, \dots, n\}$ to an assigned vehicle $a_i \in \{0, \dots, m-1\}$:
+    \begin{equation}
+        a_i = \min\left( \lfloor x_i \cdot m \rfloor, m - 1 \right)
+    \end{equation}
+    \item \textbf{Sequence Keys ($\mathbf{x}[n:2n]$):} Defines the visiting sequence $\pi_k$ of tasks assigned to vehicle $k$ by sorting the corresponding sequence keys in ascending order:
+    \begin{equation}
+        \pi_k = \text{ordered list of tasks assigned to vehicle } k \text{ sorted by } x_{n+i-1}
+    \end{equation}
+\end{itemize}
+
+\subsubsection{Objective Functions}
+The system optimizes two primary competing objectives (both minimized):
+
+\paragraph{1. Makespan Minimization ($f_1$):}
+Minimizes the operational duration of the longest vehicle route to ensure rapid mission completion:
+\begin{equation}
+    f_1 = \max_{k \in \{0, \dots, m-1\}} T_k
+\end{equation}
+where $T_k$ is the total travel and service time for vehicle $k$:
+\begin{equation}
+    T_k = \frac{D_k}{v_k} + \sum_{i \in \pi_k} s_i
+\end{equation}
+Here, $D_k$ denotes the total distance traversed by vehicle $k$ along sequence $\pi_k$ including depot returns, $v_k$ is the cruise speed, and $s_i$ is the service time of task $i$.
+
+\paragraph{2. Total Energy Consumption ($f_2$):}
+Minimizes the cumulative energy expended across the entire vehicle fleet:
+\begin{equation}
+    f_2 = \sum_{k=0}^{m-1} E_k = \sum_{k=0}^{m-1} \left( e_k \cdot D_k \right)
+\end{equation}
+where $e_k$ is the energy rate constant per unit distance for vehicle $k$.
+
+
+\paragraph{3. Combined Objective Function ($F$):}
+The overall optimization objective combines makespan minimization and total energy consumption minimization into a single weighted objective function. This allows the optimization algorithm to find a solution that balances mission completion time and energy efficiency.
+
+The combined objective function is defined as:
+
+\begin{equation}
+    \min F(\mathbf{x}) =
+    \alpha \frac{f_1(\mathbf{x})}{T_{\max}}
+    + (1-\alpha)
+    \frac{f_2(\mathbf{x})}{\sum_{k=0}^{m-1} B_k}
+\end{equation}
+
+where $\alpha \in [0,1]$ is a weighting parameter controlling the relative importance of mission completion time and total energy consumption.
+
+The two objectives are normalized because they have different units and magnitudes. Makespan is normalized by the maximum mission deadline $T_{\max}$, while total energy consumption is normalized by the sum of the battery capacities of all vehicles.
+
+For equal importance between the two objectives, $\alpha = 0.5$ is selected, resulting in:
+
+\begin{equation}
+    \min F(\mathbf{x}) =
+    0.5 \frac{f_1(\mathbf{x})}{T_{\max}}
+    + 0.5
+    \frac{f_2(\mathbf{x})}{\sum_{k=0}^{m-1} B_k}
+\end{equation}
+
+The optimization algorithm therefore seeks to minimize the combined objective function while satisfying all operational constraints.
+
+
+\subsection{Constraints}
+The optimization problem is subjected to four main operational constraints. In the solution evaluation pipeline, these are expressed as normalized violation functions $g_j \ge 0$ (where $g_j = 0$ denotes full feasibility):
+
+\begin{enumerate}
+    \item \textbf{Vehicle Capability Matching ($g_1$):} UGV-only tasks cannot be assigned to UAVs, and UAV-only tasks cannot be assigned to UGVs:
+    \begin{equation}
+        g_1 = \frac{1}{n} \sum_{k=0}^{m-1} \sum_{i \in \pi_k} \mathbb{I}\left(\text{Incompatible}(k, i)\right) \le 0
+    \end{equation}
+    where $\mathbb{I}(\cdot)$ is an indicator function returning 1 if vehicle $k$ is physically incapable of performing task $i$, and 0 otherwise.
+
+    \item \textbf{Payload Capacity Constraint ($g_2$):} The cumulative load carried by vehicle $k$ must not exceed its maximum payload capacity $Q_k$:
+    \begin{equation}
+        g_2 = \sum_{k=0}^{m-1} \max\left(0, \frac{\sum_{i \in \pi_k} q_i - Q_k}{Q_k}\right) \le 0
+    \end{equation}
+
+    \item \textbf{Battery Energy Limit ($g_3$):} The energy required for vehicle $k$ to finish its route must not exceed its onboard battery capacity $B_k$:
+    \begin{equation}
+        g_3 = \sum_{k=0}^{m-1} \max\left(0, \frac{E_k - B_k}{B_k}\right) \le 0
+    \end{equation}
+
+    \item \textbf{Maximum Mission Deadline ($g_4$):} The operational duration of vehicle $k$ must not exceed the global mission completion deadline $T_{\max}$:
+    \begin{equation}
+        g_4 = \sum_{k=0}^{m-1} \max\left(0, \frac{T_k - T_{\max}}{T_{\max}}\right) \le 0
+    \end{equation}
+\end{enumerate}
+
+\section{Simulated Annealing Algorithm Implementation}\label{sec:sa_implementation}
+To efficiently solve the coupled task allocation and vehicle routing problem formulated above, a specialized Simulated Annealing (SA) metaheuristic was designed and implemented. This section explains the algorithmic architecture, state representation, initial greedy solution generation, neighborhood perturbation operators, cooling schedule, and constraint handling strategies.
+
+\subsection{Architectural Design and State Representation}
+The solver employs a hybrid two-tier representation scheme:
+\begin{itemize}
+    \item \textbf{Public Interface Encoding (Random-Keys):} For compatibility with the overarching project benchmarking framework, candidate solutions are externally represented as continuous vectors $\mathbf{x} \in [0, 1]^{2n}$. When returning results or interfacing with external evaluation routines, routes are converted to random keys by assigning allocation keys centered within each vehicle's bin ($\frac{k + 0.5}{m}$) and unique ascending sequence ranks ($\frac{\text{rank} + 1}{n + 1}$) matching the planned route order.
+    \item \textbf{Internal Route-State Cache (\texttt{RouteState}):} Standard continuous decoding from random keys requires sorting and rebuilding distance traversals across all $m$ vehicles on every step, incurring an $\mathcal{O}(n^2)$ computational overhead. In our simulated annealing engine, the search operates directly on discrete vehicle route lists $\Pi = \{\pi_0, \pi_1, \dots, \pi_{m-1}\}$ coupled with cached per-vehicle metrics (traversed distance $D_k$, operational time $T_k$, energy consumption $E_k$, cumulative payload $Q_k^{\text{load}}$, and normalized capability violation count). 
+\end{itemize}
+When a neighborhood perturbation modifies only vehicle $a$ and vehicle $b$, only routes $\pi_a$ and $\pi_b$ are re-evaluated. This incremental evaluation reduces the per-move complexity to $\mathcal{O}(m + |\pi_a| + |\pi_b|)$, delivering over a $6\times$ computational speedup compared to full genome re-evaluation.
+
+\subsection{Capability-Aware Greedy Initial Construction}
+Starting the annealing process from a purely random permutation frequently leads to severe initial constraint violations that trap local search. To provide high-quality starting solutions, a randomized greedy insertion heuristic is executed:
+\begin{enumerate}
+    \item Tasks with strict hardware restrictions (UGV-only or UAV-only) are prioritized and inserted first, followed by flexible tasks.
+    \item For each unassigned task, all insertion positions across all capability-compatible vehicles are evaluated.
+    \item Each insertion is scored using vectorized edge deltas $\Delta D = D(u, \text{task}) + D(\text{task}, v) - D(u, v)$ without rebuilding the entire tour, evaluating the combined normalized incremental objective $\Delta F$ plus a small randomized perturbation $\mathcal{U}(0, 0.002)$ to introduce diversity across restarts.
+    \item If no strictly feasible insertion exists, the candidate minimizing total constraint violation excess is chosen.
+    \item Across $K$ randomized restarts (default $K = 10$ for case studies, $K = 100$ for single runs), the best candidate solution---prioritizing full feasibility---is selected to initialize the annealing chain.
+\end{enumerate}
+
+\subsection{Penalized Search Cost and Constraint Handling}
+During optimization, hard operational constraints (payload limits, battery energy, and mission deadlines) are managed via an additive penalty function. Infeasible solutions are permitted within intermediate annealing states, allowing the search trajectory to navigate across narrow infeasible ridges separating disconnected feasible basins:
+\begin{equation}\label{eq:sa_fitness}
+    F_{\text{search}}(\mathbf{x}) = F(\mathbf{x}) + \lambda \sum_{j=1}^{4} g_j(\mathbf{x})
+\end{equation}
+where $\lambda$ is a dimensionless penalty weight (calibrated to $\lambda = 100$). An additive penalty formulation is chosen over a multiplicative penalty scheme $F \cdot (1 + \lambda \sum g_j)$ because multiplicative penalties lose their repulsive force when the normalized objective $F(\mathbf{x})$ approaches zero, creating artificial attractors in infeasible regions.
+
+\subsection{Temperature Initialization and Derived Cooling Schedule}
+To ensure instance-independent search dynamics across varying fleet sizes and deadlines, the annealing temperature is calibrated dynamically:
+\begin{itemize}
+    \item \textbf{Initial Temperature Calibration ($T_0$):} Prior to the main loop, $M = 200$ neighborhood moves are sampled from the initial state. The mean absolute change in search cost $\overline{|\Delta F_{\text{search}}|}$ is computed, and the initial temperature $T_0$ is set such that an average uphill move is accepted with a predefined target acceptance probability $P_0$ (default $P_0 = 0.8$):
+    \begin{equation}
+        T_0 = \frac{\overline{|\Delta F_{\text{search}}|}}{-\ln(P_0)}
+    \end{equation}
+    \item \textbf{Derived Geometric Cooling Schedule:} The temperature decreases geometrically at each iteration step: $T_{t+1} = \beta \cdot T_t$. Rather than relying on an ad-hoc decay rate, the cooling factor $\beta$ is derived analytically to guarantee that the temperature cools smoothly from $T_0$ down to a specified target minimum temperature $T_{\text{final}} = 10^{-5}$ at the final proposal iteration $N$:
+    \begin{equation}
+        \beta = \left(\frac{T_{\text{final}}}{T_0}\right)^{\frac{1}{N-1}}
+    \end{equation}
+    This eliminates premature quenching on short runs while avoiding prolonged random-walk behavior on extended iteration budgets.
+\end{itemize}
+
+\subsection{Problem-Specific Neighborhood Operators}
+Five distinct neighborhood operators are implemented to explore allocation and routing dimensions simultaneously:
+\begin{enumerate}
+    \item \textbf{Relocate (\texttt{relocate}):} A task $i$ is removed from vehicle $a$ and inserted into a random position in vehicle $b$ ($b \ne a$ or $b = a$). This operator rebalances workload across vehicles and handles task migration.
+    \item \textbf{Inter-Vehicle Swap (\texttt{swap}):} A task on vehicle $a$ and a task on vehicle $b$ are exchanged. The operator strictly validates compatibility: task $i$ must be compatible with vehicle $b$, and task $j$ must be compatible with vehicle $a$.
+    \item \textbf{Two-Opt Route Inversion (\texttt{two\_opt}):} Reverses a sub-sequence of tasks within a single vehicle route: $(u_1, \dots, u_i, u_{i+1}, \dots, u_j, u_{j+1}, \dots) \to (u_1, \dots, u_i, u_j, \dots, u_{i+1}, u_{j+1}, \dots)$. This operator eliminates self-intersecting path crossings without altering task allocation.
+    \item \textbf{Intra-Route Swap (\texttt{intra\_swap}):} Exchanges the positions of two distinct tasks within the same vehicle tour, enabling localized sequence permutations.
+    \item \textbf{Or-Opt Segment Shift (\texttt{or\_opt}):} Selects a contiguous block of 1, 2, or 3 tasks from vehicle $a$ and inserts them into vehicle $b$ (or another position in vehicle $a$), with an optional $50\%$ probability of reversing the transferred block. This preserves advantageous sub-paths while migrating compact task clusters.
+\end{enumerate}
+
+\paragraph{Compatibility Enforcement and Retry Mechanisms:} To avoid wasting search iterations on infeasible allocations, all inter-vehicle operators filter candidate vehicle assignments against task compatibility sets before generating a move. If an operator draw fails to produce a valid, non-identity move (e.g., due to vehicle incompatibility or single-task routes), the engine retries up to 8 times before falling back to alternative operators in a randomized permutation.
+
+\subsection{Acceptance Criterion and Elite Management}
+Proposals are evaluated using the standard Metropolis acceptance criterion:
+\begin{equation}
+    P(\text{accept } \mathbf{x}' \mid \mathbf{x}, T) =
+    \begin{cases}
+        1, & \text{if } \Delta F_{\text{search}} \le 0 \\
+        \exp\left(-\frac{\Delta F_{\text{search}}}{T}\right), & \text{if } \Delta F_{\text{search}} > 0
+    \end{cases}
+\end{equation}
+To ensure robustness against transient infeasibility and high-temperature exploration, a dedicated \textit{Elitist Archive} tracks the best feasible solution discovered throughout the entire chain. Even if the current search state drifts into uphill or temporarily infeasible territory, the best feasible solution $\mathbf{x}^*_{\text{feasible}}$ is preserved and returned upon mission termination. If no strictly feasible solution was visited during the run, the solution minimizing total constraint violation is returned as a fallback.
+
+\begin{figure}[htbp]
+\centering
+\begin{tikzpicture}[
+    node distance=0.85cm and 1.2cm,
+    startstop/.style={rectangle, rounded corners, minimum width=3.2cm, minimum height=0.7cm, text centered, draw=black, fill=blue!10, font=\small},
+    process/.style={rectangle, minimum width=3.4cm, minimum height=0.7cm, text centered, draw=black, fill=gray!10, font=\small},
+    decision/.style={diamond, aspect=2.2, minimum width=2.4cm, minimum height=0.7cm, text centered, draw=black, fill=yellow!15, font=\footnotesize},
+    arrow/.style={thick,->,>=stealth}
+]
+\node (start) [startstop] {Initialize Instance Data};
+\node (greedy) [process, below=of start] {Greedy Construction ($K$ Restarts)};
+\node (init_state) [process, below=of greedy] {Initialize Route State \& Caches};
+\node (calib) [process, below=of init_state] {Calibrate $T_0$ ($M$ moves, $P_0=0.8$)};
+\node (propose) [process, below=of calib] {Select Compatible Operator};
+\node (eval) [process, below=of propose] {Incremental Delta Evaluation};
+\node (decide) [decision, below=of eval] {$\Delta \le 0$ or $r < e^{-\Delta/T}$?};
+\node (accept) [process, right=1.2cm of decide] {Update Current State};
+\node (reject) [process, left=1.2cm of decide] {Retain Current State};
+\node (elite) [process, below=1.2cm of decide] {Update Feasible Incumbent};
+\node (iter) [decision, below=of elite] {Iteration $t < N$?};
+\node (cool) [process, right=1.2cm of iter] {Cool: $T \gets \beta \cdot T$};
+\node (finish) [startstop, below=of iter] {Return Best Feasible Solution};
+
+\draw [arrow] (start) -- (greedy);
+\draw [arrow] (greedy) -- (init_state);
+\draw [arrow] (init_state) -- (calib);
+\draw [arrow] (calib) -- (propose);
+\draw [arrow] (propose) -- (eval);
+\draw [arrow] (eval) -- (decide);
+\draw [arrow] (decide) -- node[above, font=\footnotesize] {Yes} (accept);
+\draw [arrow] (decide) -- node[above, font=\footnotesize] {No} (reject);
+\draw [arrow] (accept) |- (elite);
+\draw [arrow] (reject) |- (elite);
+\draw [arrow] (elite) -- (iter);
+\draw [arrow] (iter) -- node[above, font=\footnotesize] {Yes} (cool);
+\draw [arrow] (cool) |- (propose);
+\draw [arrow] (iter) -- node[right, font=\footnotesize] {No} (finish);
+\end{tikzpicture}
+\caption{Flowchart of the Simulated Annealing solver for cooperative UAV--UGV routing.}
+\label{fig:sa_flowchart}
+\end{figure}
+
+\begin{algorithm}[htbp]
+\caption{Simulated Annealing for Heterogeneous UAV--UGV Task Allocation and Routing}
+\label{alg:sa}
+\begin{algorithmic}[1]
+\REQUIRE Instance $\mathcal{I}$, iterations $N$, restarts $K$, penalty $\lambda$, target acceptance $P_0$, final temperature $T_{\text{final}}$
+\ENSURE Best discovered feasible route solution $\Pi^*$ and corresponding decision vector $\mathbf{x}^*$
+\STATE $\Pi_{\text{init}} \gets \text{GreedyConstruction}(\mathcal{I}, K)$
+\STATE $\mathcal{S}_{\text{current}} \gets \text{InitRouteState}(\Pi_{\text{init}}, \mathcal{I})$
+\STATE $\mathcal{S}_{\text{best}} \gets \mathcal{S}_{\text{current}}$
+\STATE $\overline{|\Delta|} \gets \text{SampleCostDifferences}(\mathcal{S}_{\text{current}}, \mathcal{I}, M=200, \lambda)$
+\STATE $T_0 \gets \overline{|\Delta|} / (-\ln P_0)$
+\STATE $\beta \gets (T_{\text{final}} / T_0)^{1 / (N - 1)}$
+\STATE $T \gets T_0$
+\FOR{$t = 1$ \TO $N$}
+    \STATE $\text{op} \gets \text{SelectOperator}(\{\text{relocate}, \text{swap}, \text{two\_opt}, \text{intra\_swap}, \text{or\_opt}\})$
+    \STATE $\mathcal{S}_{\text{candidate}} \gets \text{ProposeMove}(\mathcal{S}_{\text{current}}, \mathcal{I}, \text{op})$ \COMMENT{Up to 8 compatible attempts}
+    \IF{$\mathcal{S}_{\text{candidate}} \ne \text{None}$}
+        \STATE $\Delta \gets F_{\text{search}}(\mathcal{S}_{\text{candidate}}) - F_{\text{search}}(\mathcal{S}_{\text{current}})$
+        \IF{$\Delta \le 0$ \OR $\text{rand}(0, 1) < \exp(-\Delta / T)$}
+            \STATE $\mathcal{S}_{\text{current}} \gets \mathcal{S}_{\text{candidate}}$
+        \ENDIF
+        \IF{$\text{IsBetter}(\mathcal{S}_{\text{candidate}}, \mathcal{S}_{\text{best}})$}
+            \STATE $\mathcal{S}_{\text{best}} \gets \mathcal{S}_{\text{candidate}}$ \COMMENT{Feasibility prioritized}
+        \ENDIF
+    \ENDIF
+    \STATE $T \gets \max(T_{\text{tiny}}, T \cdot \beta)$
+\ENDFOR
+\STATE $\mathbf{x}^* \gets \text{EncodeRandomKeys}(\mathcal{S}_{\text{best}}.\text{routes}, \mathcal{I})$
+\RETURN $\mathcal{S}_{\text{best}}.\text{routes}, \mathbf{x}^*$
+\end{algorithmic}
+\end{algorithm}

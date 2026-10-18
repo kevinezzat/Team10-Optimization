@@ -1,0 +1,15 @@
+\addvspace {10\p@ }
+\addvspace {10\p@ }
+\addvspace {10\p@ }
+\addvspace {10\p@ }
+\contentsline {table}{\numberline {4.1}{\ignorespaces System parameters and environmental configuration across all seven case studies.}}{17}{table.caption.22}%
+\contentsline {table}{\numberline {4.2}{\ignorespaces Comparison between exact global optimization and Simulated Annealing across small instances.}}{18}{table.caption.24}%
+\contentsline {table}{\numberline {4.3}{\ignorespaces Computational runtime for 3,000 neighborhood updates under full vs.\ cached evaluation.}}{19}{table.caption.25}%
+\contentsline {table}{\numberline {4.4}{\ignorespaces Baseline comparison across 20 independent runs (2000 evaluations per run).}}{20}{table.caption.26}%
+\contentsline {table}{\numberline {4.5}{\ignorespaces Paired statistical hypothesis testing (Sign Test and Bootstrap 95\% CI) comparing SA against baselines.}}{20}{table.caption.27}%
+\contentsline {table}{\numberline {4.6}{\ignorespaces Comprehensive performance results across all seven case studies (10 independent runs each).}}{21}{table.caption.29}%
+\contentsline {table}{\numberline {4.7}{\ignorespaces Effect of iteration budget $N$ on solution quality and computation time.}}{24}{table.caption.33}%
+\contentsline {table}{\numberline {4.8}{\ignorespaces Neighborhood operator ablation study on the 30-task reference problem.}}{27}{table.caption.34}%
+\contentsline {table}{\numberline {4.9}{\ignorespaces Pareto trade-off between makespan and fleet energy consumption across $\alpha \in [0.0, 1.0]$.}}{29}{table.caption.37}%
+\addvspace {10\p@ }
+\addvspace {10\p@ }

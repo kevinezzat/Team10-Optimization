@@ -1,0 +1,30 @@
+\chapter{Conclusion}\label{chap:concl}
+
+This progress report presented a comprehensive optimization framework for the Heterogeneous UAV--UGV Cooperative Task Allocation and Routing Problem. By combining the complementary mobility and endurance capabilities of ground and aerial vehicles, the system coordinates multi-robot teams to execute distributed tasks efficiently.
+
+\section{Summary of Contributions}
+The key contributions and findings presented in this report are summarized as follows:
+\begin{enumerate}
+    \item \textbf{Mathematical Formulation and Normalization:} Formulated a bi-objective combinatorial optimization problem that balances mission makespan ($f_1$) and total fleet energy consumption ($f_2$). Normalizing each objective by the global deadline $T_{\max}$ and total fleet battery capacity $\sum B_k$ established a scale-consistent, dimensionless combined objective function $F$.
+    \item \textbf{High-Efficiency Simulated Annealing Solver:} Designed a specialized Simulated Annealing metaheuristic featuring:
+    \begin{itemize}
+        \item A hybrid two-tier representation that preserves continuous Random-Key compatibility externally while operating on an internal cached route-state representation (\texttt{RouteState}). This incremental evaluation delivers a $5.25\times$ to $6.40\times$ speedup over full genome evaluation.
+        \item A capability-aware greedy construction heuristic that evaluates insertion slack via vectorized edge deltas to provide high-quality, feasible starting solutions.
+        \item Five problem-specific neighborhood operators (\texttt{relocate}, \texttt{swap}, \texttt{two\_opt}, \texttt{intra\_swap}, and \texttt{or\_opt}) equipped with hardware capability filtering and retry mechanisms.
+        \item Automatic temperature calibration ($T_0$) targeting an 80\% initial acceptance rate and an analytically derived geometric cooling schedule reaching $T_{\text{final}} = 10^{-5}$ at the final proposal iteration.
+    \end{itemize}
+    \item \textbf{Rigorous Mathematical Validation:}
+    \begin{itemize}
+        \item Validated against an exhaustive exact global solver across small instances ($n \in \{6, 7, 8, 9\}$), achieving an exact 0.00\% optimality gap on $n=6,7,8$ and a 1.41\% mean gap on $n=9$ in under 1.6\,s, while exact combinatorial search required exponential time.
+        \item Validated against an 8-customer \ac{CVRP} benchmark fixture, hitting the proven global optimum distance of 16.0\,m across 100\% of trials.
+        \item Statistically benchmarked against Random Search, Greedy Construction, and First-Choice Hill Climbing across 20 seeded trials per case. Statistical hypothesis testing (paired sign tests and bootstrap 95\% confidence intervals) confirmed that SA decisively outperforms random search ($p < 2 \times 10^{-6}$) and avoids the myopic traps and $\mathcal{O}(n^2 m)$ computational scaling bottlenecks of greedy heuristics.
+    \end{itemize}
+    \item \textbf{Comprehensive Case Study Evaluations:} Evaluated seven benchmark scenarios ranging from 10 to 100 tasks. The solver demonstrated 100\% feasibility and stable convergence across all standard instances. For the high-stress endurance case (\texttt{battery75}), where UAV battery was slashed by 88\%, a targeted diagnostic experiment demonstrated that increasing search iterations to 60,000 achieves 100\% feasibility ($F = 0.6049$) with zero constraint violations. Empirical runtime scaled sub-linearly as $\mathcal{O}(n^{0.0985})$.
+    \item \textbf{Systematic Parameter Sensitivity and Pareto Analysis:} Hyperparameter sweeps revealed that:
+    \begin{itemize}
+        \item Solution quality improves monotonically with iteration budget up to $N = 60,000$.
+        \item An additive constraint penalty of $\lambda = 100$ provides robust constraint enforcement while allowing beneficial intermediate boundary transitions.
+        \item Operator ablation confirmed that combining inter-vehicle migration (\texttt{relocate}, \texttt{swap}) with intra-vehicle tour smoothing (\texttt{two\_opt}, \texttt{or\_opt}) is essential for multi-vehicle coordination.
+        \item Sweeping the bi-objective weight $\alpha \in [0, 1]$ mapped out the convex Pareto frontier between makespan and fleet energy, demonstrating that $\alpha = 0.5$ captures 78\% of the maximum possible time reduction while consuming only 37\% of the additional energy.
+    \end{itemize}
+\end{enumerate}

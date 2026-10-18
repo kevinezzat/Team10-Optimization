@@ -1,0 +1,53 @@
+\contentsline {chapter}{Acknowledgments}{ii}{chapter*.1}%
+\contentsline {chapter}{List of Abbreviations}{vii}{section*.5}%
+\contentsline {chapter}{List of Figures}{viii}{section*.7}%
+\contentsline {chapter}{List of Tables}{ix}{section*.9}%
+\contentsline {chapter}{\numberline {1}Introduction}{1}{chapter.1}%
+\contentsline {section}{\numberline {1.1}Project Motivation and Background}{1}{section.1.1}%
+\contentsline {section}{\numberline {1.2}Problem Statement and Objectives}{2}{section.1.2}%
+\contentsline {section}{\numberline {1.3}Report Organization}{2}{section.1.3}%
+\contentsline {chapter}{\numberline {2}Literature Review}{4}{chapter.2}%
+\contentsline {chapter}{\numberline {3}Methodology}{6}{chapter.3}%
+\contentsline {section}{\numberline {3.1}Relation to Project Statement and Objectives}{6}{section.3.1}%
+\contentsline {section}{\numberline {3.2}System Assumptions}{7}{section.3.2}%
+\contentsline {section}{\numberline {3.3}Mathematical Problem Formulation}{8}{section.3.3}%
+\contentsline {subsubsection}{Decision Variables}{8}{section*.15}%
+\contentsline {subsubsection}{Objective Functions}{8}{section*.16}%
+\contentsline {paragraph}{1. Makespan Minimization ($f_1$):}{8}{section*.17}%
+\contentsline {paragraph}{2. Total Energy Consumption ($f_2$):}{8}{section*.18}%
+\contentsline {paragraph}{3. Combined Objective Function ($F$):}{8}{section*.19}%
+\contentsline {subsection}{\numberline {3.3.1}Constraints}{9}{subsection.3.3.1}%
+\contentsline {section}{\numberline {3.4}Simulated Annealing Algorithm Implementation}{10}{section.3.4}%
+\contentsline {subsection}{\numberline {3.4.1}Architectural Design and State Representation}{10}{subsection.3.4.1}%
+\contentsline {subsection}{\numberline {3.4.2}Capability-Aware Greedy Initial Construction}{11}{subsection.3.4.2}%
+\contentsline {subsection}{\numberline {3.4.3}Penalized Search Cost and Constraint Handling}{11}{subsection.3.4.3}%
+\contentsline {subsection}{\numberline {3.4.4}Temperature Initialization and Derived Cooling Schedule}{12}{subsection.3.4.4}%
+\contentsline {subsection}{\numberline {3.4.5}Problem-Specific Neighborhood Operators}{12}{subsection.3.4.5}%
+\contentsline {paragraph}{Compatibility Enforcement and Retry Mechanisms:}{13}{section*.20}%
+\contentsline {subsection}{\numberline {3.4.6}Acceptance Criterion and Elite Management}{13}{subsection.3.4.6}%
+\contentsline {chapter}{\numberline {4}Results and Discussion}{16}{chapter.4}%
+\contentsline {section}{\numberline {4.1}Case Studies Description and Input Parameters}{16}{section.4.1}%
+\contentsline {section}{\numberline {4.2}Algorithm Validation Results and Discussion}{17}{section.4.2}%
+\contentsline {subsection}{\numberline {4.2.1}Exact Global Optimality Verification ($n = 6, 7, 8, 9$)}{18}{subsection.4.2.1}%
+\contentsline {subsection}{\numberline {4.2.2}Synthetic Capacitated Vehicle Routing Benchmark Validation}{18}{subsection.4.2.2}%
+\contentsline {subsection}{\numberline {4.2.3}Incremental State Caching and Speedup Benchmark}{19}{subsection.4.2.3}%
+\contentsline {subsection}{\numberline {4.2.4}Comparative Evaluation Against Baseline Heuristics}{19}{subsection.4.2.4}%
+\contentsline {paragraph}{Discussion of Baseline Behaviors:}{19}{section*.28}%
+\contentsline {section}{\numberline {4.3}Obtained Results of Case Studies and Discussion}{21}{section.4.3}%
+\contentsline {subsection}{\numberline {4.3.1}Detailed Case-by-Case Discussion}{23}{subsection.4.3.1}%
+\contentsline {subsection}{\numberline {4.3.2}Empirical Scalability Power Law}{24}{subsection.4.3.2}%
+\contentsline {section}{\numberline {4.4}Algorithm Performance and Parameter Sensitivity Analysis}{24}{section.4.4}%
+\contentsline {subsection}{\numberline {4.4.1}Iteration Search Budget ($N$)}{24}{subsection.4.4.1}%
+\contentsline {subsection}{\numberline {4.4.2}Target Acceptance Probability ($P_0$) and Temperature Calibration}{26}{subsection.4.4.2}%
+\contentsline {subsection}{\numberline {4.4.3}Final Annealing Temperature ($T_{\text {final}}$)}{26}{subsection.4.4.3}%
+\contentsline {subsection}{\numberline {4.4.4}Constraint Penalty Weight ($\lambda $)}{26}{subsection.4.4.4}%
+\contentsline {subsection}{\numberline {4.4.5}Neighborhood Operator Ablation Study}{27}{subsection.4.4.5}%
+\contentsline {paragraph}{Ablation Findings:}{27}{section*.35}%
+\contentsline {subsection}{\numberline {4.4.6}Adaptive Operator Selection and Reheating}{28}{subsection.4.4.6}%
+\contentsline {subsection}{\numberline {4.4.7}Bi-Objective Weight ($\alpha $) and Pareto Frontier}{28}{subsection.4.4.7}%
+\contentsline {paragraph}{Trade-off Analysis:}{28}{section*.38}%
+\contentsline {chapter}{\numberline {5}Conclusion}{30}{chapter.5}%
+\contentsline {section}{\numberline {5.1}Summary of Contributions}{30}{section.5.1}%
+\contentsline {chapter}{\numberline {6}Future Work}{32}{chapter.6}%
+\contentsline {chapter}{Appendix}{33}{section*.39}%
+\contentsline {chapter}{References}{34}{section*.40}%

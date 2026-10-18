@@ -1,0 +1,11 @@
+\addvspace {10\p@ }
+\addvspace {10\p@ }
+\addvspace {10\p@ }
+\contentsline {figure}{\numberline {3.1}{\ignorespaces Flowchart of the Simulated Annealing solver for cooperative UAV--UGV routing.}}{14}{figure.caption.21}%
+\addvspace {10\p@ }
+\contentsline {figure}{\numberline {4.1}{\ignorespaces Empirical scalability of the Simulated Annealing solver across problem size $n$: (left) mean execution runtime in seconds, and (right) mean feasible combined objective $F$.}}{22}{figure.caption.30}%
+\contentsline {figure}{\numberline {4.2}{\ignorespaces Optimized route topology, timeline scheduling, and resource consumption profiles for the 30-task reference case (\texttt {reference30}).}}{22}{figure.caption.31}%
+\contentsline {figure}{\numberline {4.3}{\ignorespaces Hyperparameter sensitivity, operator ablation, and Pareto trade-off analyses on the 30-task reference instance.}}{25}{figure.caption.32}%
+\contentsline {figure}{\numberline {4.4}{\ignorespaces Variation of mission makespan $f_1$ and fleet energy consumption $f_2$ as a function of weighting parameter $\alpha \in [0, 1]$.}}{28}{figure.caption.36}%
+\addvspace {10\p@ }
+\addvspace {10\p@ }

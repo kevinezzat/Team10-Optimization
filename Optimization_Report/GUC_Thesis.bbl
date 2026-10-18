@@ -1,0 +1,35 @@
+\begin{thebibliography}{1}
+
+\bibitem{ma}
+T.~Ma, P.~Lu, F.~Deng, and K.~Geng.
+\newblock Air--ground collaborative multi-target detection task assignment and
+  path planning optimization.
+\newblock {\em Drones}, 8(3):110, 2024.
+
+\bibitem{mondal}
+M.~S. Mondal, S.~Ramasamy, J.~D. Humann, J.~M. Dotterweich, J.-P.~F. Reddinger,
+  M.~A. Childers, and P.~A. Bhounsule.
+\newblock Cooperative multi-agent planning framework for fuel constrained
+  {UAV-UGV} routing problem.
+\newblock {\em Journal of Intelligent \& Robotic Systems}, 111:12, 2025.
+
+\bibitem{chen}
+K.~Chen, W.~Zhao, Y.~Liu, N.~Wang, Y.~Xia, W.~Liang, and S.~Wang.
+\newblock {UAV-UGV} cooperative trajectory optimization and task allocation for
+  medical rescue tasks in post-disaster environments.
+\newblock {\em Unmanned Systems}, 2025.
+\newblock arXiv:2506.06136.
+
+\bibitem{gao}
+W.~Gao, J.~Luo, W.~Zhang, W.~Yuan, and Z.~Liao.
+\newblock Commanding cooperative {UGV-UAV} with nested vehicle routing for
+  emergency resource delivery.
+\newblock {\em IEEE Access}, 8:215691--215704, 2020.
+
+\bibitem{wang}
+C.-H. Wang, Q.-K. Pan, X.-P. Li, H.-Y. Sang, and B.~Wang.
+\newblock A multi-objective teaching-learning-based optimizer for a cooperative
+  task allocation problem of weeding robots and spraying drones.
+\newblock {\em Swarm and Evolutionary Computation}, 87:101565, 2024.
+
+\end{thebibliography}

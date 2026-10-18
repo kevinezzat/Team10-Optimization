@@ -1,0 +1,34 @@
+\chapter{Introduction}\label{chap:intro}
+
+\section{Project Motivation and Background} \label{sec:intro_background}
+In recent years, the deployment of \acf{MRS} has transformed large-scale civilian and military field operations, including post-disaster humanitarian assistance, environmental monitoring, agricultural surveying, and precision package logistics. A central operational challenge within multi-robot deployment is coordinating heterogeneous teams composed of \ac{uav} and \ac{ugv} units.
+
+Ground and aerial autonomous platforms possess complementary physical and operational characteristics:
+\begin{itemize}
+    \item \textbf{Unmanned Aerial Vehicles (UAVs):} Offer agile, high-speed transit ($v \approx 10$\,m/s) unaffected by ground obstacles or broken terrain. However, their operational persistence is strictly constrained by onboard lithium-polymer battery capacities, leading to limited flight endurance and restricted payload carrying limits ($Q \approx 10\text{--}25$\,kg).
+    \item \textbf{Unmanned Ground Vehicles (UGVs):} Possess substantial payload capacities ($Q \approx 30\text{--}50$\,kg) and generous energy storage buffers, enabling prolonged operational persistence. However, ground units travel at substantially lower speeds ($v \approx 2$\,m/s) and must negotiate terrain contours, obstacle detours, and surface friction.
+\end{itemize}
+
+Harnessing the synergies of such heterogeneous multi-robot fleets requires addressing two intricately coupled NP-hard combinatorial optimization challenges:
+\begin{enumerate}
+    \item \textbf{Task Allocation:} Partitioning a set of spatially distributed tasks across vehicles while respecting physical platform compatibility (e.g., ground-contact manipulation vs.\ elevated sensory inspection).
+    \item \textbf{Fleet Routing and Scheduling:} Determining the visiting order of assigned tasks for each vehicle to simultaneously minimize total mission duration (\textit{makespan}) and cumulative fleet energy consumption while strictly adhering to vehicle battery reserves, payload limits, and global deadlines.
+\end{enumerate}
+
+\section{Problem Statement and Objectives} \label{sec:intro_objectives}
+The objective of this project is to develop, validate, and evaluate an optimization framework capable of solving the Heterogeneous UAV--UGV Cooperative Task Allocation and Routing Problem. The optimization must simultaneously optimize two competing operational objectives:
+\begin{enumerate}
+    \item \textbf{Makespan Minimization ($f_1$):} Minimizing the duration of the longest vehicle route, ensuring rapid mission completion.
+    \item \textbf{Total Fleet Energy Consumption Minimization ($f_2$):} Minimizing the cumulative energy expended across all ground and aerial vehicles.
+\end{enumerate}
+
+The system is subjected to four operational constraints: vehicle-task capability matching, vehicle payload capacities, onboard battery limits, and maximum mission deadlines. To solve this problem at realistic operational scales, a metaheuristic optimization solver based on Simulated Annealing (\ac{SA}) is developed. The solver combines domain-specific neighborhood moves with an efficient incremental route caching architecture, enabling rapid exploration of high-dimensional solution spaces.
+
+\section{Report Organization} \label{sec:intro_org}
+This report is organized into the following chapters:
+\begin{itemize}
+    \item \textbf{Chapter \ref{chap:background}: Literature Review} examines state-of-the-art formulations and solution methodologies for cooperative UAV--UGV task allocation and routing across recent robotics and operations research literature (2020--2025).
+    \item \textbf{Chapter \ref{chap:Methodology}: Methodology} formalizes the kinematic abstraction, mathematical problem formulation, decision variables, dual objective functions, operational constraints, and the specialized Simulated Annealing algorithm implementation, complete with algorithmic pseudocode and workflow illustration.
+    \item \textbf{Chapter \ref{chap:results}: Results and Discussion} details the experimental setup across seven benchmark case studies, presents rigorous validation against exact global solvers and heuristic baselines, analyzes fleet performance across scales up to 100 tasks, and investigates hyperparameter sensitivity and multi-objective Pareto trade-offs.
+    \item \textbf{Chapter \ref{chap:concl}: Conclusion} summarizes the key empirical findings, operational insights, and outlines prospective avenues for future work.
+\end{itemize}
