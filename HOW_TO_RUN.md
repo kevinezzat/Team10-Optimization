@@ -1,69 +1,67 @@
-# How to Run the Code
+# Reproducing Milestone 3
 
-## 1) Prerequisites
-- Python 3.9+ (recommended)
-- `pip`
-
-## 2) Install Dependencies
-From the repository root:
+Use Python 3.10+ from the repository root. All figures use Agg; no GUI or GPU is needed.
 
 ```bash
-pip install -r requirements.txt
+python -m venv .venv
+.venv/Scripts/python.exe -m pip install -r requirements.txt
 ```
 
-## 3) Run the Demo
-Default run (30 tasks, 2 UGVs, 3 UAVs):
-
-```bash
-python demo.py
-```
-
-Custom run (`n m_g m_a`):
-
-```bash
-python demo.py 60 3 4
-```
-
-## 4) Output Files
-After a successful run, the script saves:
-- `routes.png`
-- `objective_space.png`
-
-## 5) Milestone 3 — Simulated Annealing
-
-The SA implementation **uses the existing** `instance.py` generator and
-`fitness.py` decoder / evaluator. No alternate model or dataset is created.
-Its optimization target is the updated report's scalar objective:
-`F = 0.5 * makespan / T_max + 0.5 * energy / sum(vehicle batteries)`.
-Batteries and energy are measured in **kJ**, not Wh. All UAVs share one battery
-value and all UGVs share another, as in the report.
-
-Run from the repository root:
-
-```bash
-python run_sa.py
-```
-
-Customize the reproducible scenario or SA budget:
-
-```bash
-python run_sa.py --tasks 30 --ugvs 2 --uavs 3 --instance-seed 0 --sa-seed 1 --deadline 1800 --iterations 12000 --output outputs_sa_n30
-```
-
-Outputs: `outputs_sa_n30/metrics.json`, `convergence.png`, `routes.png`.
-The saved JSON contains route assignments and the four constraint violations.
-
-The **finite** `--deadline` is essential for the normalization in the report.
-The original `demo.py` uses `t_max=inf` for its unconstrained random-search
-example; it is preserved unchanged and continues to run as before.
-
-Run tests:
+Use `.venv/bin/python` on Linux/macOS. After activation, run:
 
 ```bash
 python -m unittest discover -s tests -v
+python demo.py
+python run_sa.py
+python run_cases.py --workers 2
+python -m validation --workers 3
+python -m validation.cvrp
+python -m validation.speed
+python parameter_study.py --workers 3
+python verify_outputs.py
 ```
 
-SA uses capability-aware neighborhood moves (relocate, swap, reverse), Metropolis
-acceptance, geometric cooling, an additive constraint penalty, and separate
-tracking of the best feasible solution. Random seeds allow fair comparisons
-with later GA/PSO/ACO/etc. using the same `generate_instance` calls.
+On this machine the Windows Store Python alias was inaccessible, so actual commands
+used `.venv/Scripts/python.exe` instead of `python`.
+
+| Command | Full defaults | Output |
+|---|---|---|
+| tests | Includes 3000 random moves | Console; initially about 7 seconds |
+| demo | 20000 samples, seed 1 | Root route/objective figures when feasible samples exist |
+| run_sa | 30 tasks, 12000 iterations, 100 starts, seed 1 | outputs_sa_n30/, including PNG frames |
+| run_cases | Seven cases, 10 seeds, 12000 iterations, 10 starts | results/cases/: raw runs, parameters, metrics, figures and report table |
+| validation | n=6-9 exact comparison; seven baseline cases; 20 seeds, 2000 iterations | results/validation/: exact gaps, baseline summaries and paired comparisons |
+| validation.cvrp | Synthetic 8-customer CVRP, 20 seeds | results/validation/cvrp.json |
+| validation.speed | 3000 updates, 3 repetitions per size | results/validation/speed.csv |
+| parameter_study | 10 seeds per setting, iterations up to 60000 | results/parameters/: CSVs, figures, Pareto plot, findings.md |
+
+The original single run took 14.32 seconds. Initial upgraded runs took roughly
+9-15 seconds depending on size and concurrent workload. Full repeated studies
+take many minutes to hours. Greedy baseline construction dominates validation
+cost. Use saved wall times for actual measurements; estimates are not guarantees.
+Parameter studies support `--resume`; reuse checkpoints only with the same source
+and inputs. Configuration is checked but source-version migrations are not.
+Case studies run sequentially without `--workers`, with a sequential fallback if
+process startup fails. All process entry points use the standard main guard.
+
+Development smoke tests (not report settings):
+
+```bash
+python run_cases.py --cases small10 --seeds 2 --iterations 100 --restarts 1 --output results/smoke
+python -m validation --seeds 2 --iterations 100 --skip-baselines --output results/smoke
+```
+
+Use a separate `--output` for exploratory runs. See each CLI's `--help` for controls.
+A customized single run:
+
+```bash
+python run_sa.py --tasks 50 --ugvs 3 --uavs 3 --deadline 1200 --sa-seed 7 --iterations 30000 --target-acceptance 0.8 --penalty 100 --output outputs_custom
+```
+
+Seeds are recorded in metadata. Parameter sweeps use one fixed 30-task instance,
+so they do not establish universal defaults. Alpha changes F itself: compare
+physical time/energy across alpha. Cross-case F also uses different denominators.
+
+CVRP data are original synthetic data with an exhaustive optimum, not published
+Augerat/E-n benchmark data. Chen/Gao/Wang labels match sizes from the assignment
+prompt only; verify citations against the actual literature review.

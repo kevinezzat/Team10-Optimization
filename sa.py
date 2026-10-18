@@ -1,16 +1,15 @@
 """Simulated Annealing for the existing Team10 UAV-UGV formulation.
 
-Reuse `instance.Instance`, `fitness.decode`, and `fitness.evaluate` unchanged.
-All solutions are encoded as the same 2*n random-key vectors used in Milestone 2.
-The neighborhood is generated in route-space, then encoded back into keys.
+Preserve the Instance and random-key evaluation interfaces from Milestone 2.
+The engine uses cached route states internally, converting to keys only at
+public adapter boundaries and when returning the final solution.
 """
 from __future__ import annotations
 from dataclasses import dataclass, asdict, field
 
 import numpy as np
 
-from fitness import (Result, combined_objective, decode, evaluate,
-                     route_metrics, sa_fitness)
+from fitness import Result, combined_objective, decode, evaluate, route_metrics
 from instance import Instance, UGV_ONLY, UAV_ONLY
 
 
@@ -53,6 +52,8 @@ class SAConfig:
             raise ValueError('cooling rate and target acceptance must be in (0, 1)')
         if not 0 <= self.alpha <= 1 or not np.isfinite(self.penalty) or self.penalty < 0:
             raise ValueError('invalid alpha or penalty')
+        if self.derive_cooling and self.initial_temperature is not None and self.final_temperature >= self.initial_temperature:
+            raise ValueError('derived cooling requires final_temperature below initial_temperature')
         allowed = {'relocate', 'swap', 'two_opt', 'intra_swap', 'or_opt'}
         if not self.operators or len(set(self.operators)) != len(self.operators) or not set(self.operators) <= allowed:
             raise ValueError('operators must be distinct supported names')

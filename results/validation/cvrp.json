@@ -1,0 +1,195 @@
+{
+  "source": {
+    "name": "synthetic-eight-customer-cvrp",
+    "source": "Original deterministic test fixture created for this repository; not a published benchmark.",
+    "coordinates": [
+      [
+        0,
+        0
+      ],
+      [
+        1,
+        0
+      ],
+      [
+        2,
+        0
+      ],
+      [
+        2,
+        2
+      ],
+      [
+        0,
+        2
+      ],
+      [
+        -1,
+        0
+      ],
+      [
+        -2,
+        0
+      ],
+      [
+        -2,
+        -2
+      ],
+      [
+        0,
+        -2
+      ]
+    ],
+    "demands": [
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1
+    ],
+    "vehicles": 2,
+    "capacity": 4,
+    "distance_convention": "Unrounded Euclidean distance"
+  },
+  "exact_distance": 16.0,
+  "exact_seconds": 0.084367600036785,
+  "exact_routes": [
+    [
+      5,
+      6,
+      7,
+      8
+    ],
+    [
+      1,
+      2,
+      3,
+      4
+    ]
+  ],
+  "runs": [
+    {
+      "seed": 0,
+      "distance": 16.0,
+      "gap_percent": 0.0,
+      "feasible": true
+    },
+    {
+      "seed": 1,
+      "distance": 16.0,
+      "gap_percent": 0.0,
+      "feasible": true
+    },
+    {
+      "seed": 2,
+      "distance": 16.0,
+      "gap_percent": 0.0,
+      "feasible": true
+    },
+    {
+      "seed": 3,
+      "distance": 16.0,
+      "gap_percent": 0.0,
+      "feasible": true
+    },
+    {
+      "seed": 4,
+      "distance": 16.0,
+      "gap_percent": 0.0,
+      "feasible": true
+    },
+    {
+      "seed": 5,
+      "distance": 16.0,
+      "gap_percent": 0.0,
+      "feasible": true
+    },
+    {
+      "seed": 6,
+      "distance": 16.0,
+      "gap_percent": 0.0,
+      "feasible": true
+    },
+    {
+      "seed": 7,
+      "distance": 16.0,
+      "gap_percent": 0.0,
+      "feasible": true
+    },
+    {
+      "seed": 8,
+      "distance": 16.0,
+      "gap_percent": 0.0,
+      "feasible": true
+    },
+    {
+      "seed": 9,
+      "distance": 16.0,
+      "gap_percent": 0.0,
+      "feasible": true
+    },
+    {
+      "seed": 10,
+      "distance": 16.0,
+      "gap_percent": 0.0,
+      "feasible": true
+    },
+    {
+      "seed": 11,
+      "distance": 16.0,
+      "gap_percent": 0.0,
+      "feasible": true
+    },
+    {
+      "seed": 12,
+      "distance": 16.0,
+      "gap_percent": 0.0,
+      "feasible": true
+    },
+    {
+      "seed": 13,
+      "distance": 16.0,
+      "gap_percent": 0.0,
+      "feasible": true
+    },
+    {
+      "seed": 14,
+      "distance": 16.0,
+      "gap_percent": 0.0,
+      "feasible": true
+    },
+    {
+      "seed": 15,
+      "distance": 16.0,
+      "gap_percent": 0.0,
+      "feasible": true
+    },
+    {
+      "seed": 16,
+      "distance": 16.0,
+      "gap_percent": 0.0,
+      "feasible": true
+    },
+    {
+      "seed": 17,
+      "distance": 16.0,
+      "gap_percent": 0.0,
+      "feasible": true
+    },
+    {
+      "seed": 18,
+      "distance": 16.0,
+      "gap_percent": 0.0,
+      "feasible": true
+    },
+    {
+      "seed": 19,
+      "distance": 16.0,
+      "gap_percent": 0.0,
+      "feasible": true
+    }
+  ]
+}

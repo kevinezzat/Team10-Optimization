@@ -188,7 +188,7 @@ def run_chain(inst, config, rng, seed, chain):
             stagnant = 0
         infeasible_steps = infeasible_steps+1 if current.result.violation > 1e-9 else 0
         if config.adaptive_penalty and infeasible_steps >= config.stagnation_window:
-            penalty = min(max(1., penalty*2), 1e12)
+            penalty = max(penalty, min(max(1., penalty*2), 1e12))
             infeasible_steps = 0
         temperature = max(np.finfo(float).tiny, temperature*rate)
         if config.reheat and stagnant >= config.stagnation_window:

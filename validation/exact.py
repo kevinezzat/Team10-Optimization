@@ -1,7 +1,6 @@
 """Exact subset tour enumeration and vehicle partition search (n <= 9)."""
 from itertools import permutations
 from time import perf_counter
-import numpy as np
 from fitness import combined_objective, evaluate, route_metrics
 from sa import compatible, encode_routes
 

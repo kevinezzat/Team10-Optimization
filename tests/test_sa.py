@@ -9,13 +9,16 @@ from sa import SAConfig, encode_routes, neighbor, simulated_annealing, initial_s
 class TestSimulatedAnnealing(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
+        """Build a shared reproducible twelve-task instance."""
         cls.inst = generate_instance(n=12, m_g=2, m_a=2, seed=0, t_max=1800)
 
     def test_encode_decode_roundtrip(self):
+        """Preserve every vehicle assignment and task ordering through encoding."""
         routes = [[1, 8], [2, 5, 6], [4, 10, 3], [7, 9, 11, 12]]
         self.assertEqual(decode(encode_routes(routes, self.inst), self.inst), routes)
 
     def test_neighbor_visits_every_task_once(self):
+        """Neighbors preserve task coverage and capability compatibility."""
         inst = self.inst
         rng = np.random.default_rng(99)
         x, r = initial_solution(inst, rng, restarts=10, alpha=0.5, penalty=100.0)
@@ -27,6 +30,7 @@ class TestSimulatedAnnealing(unittest.TestCase):
             self.assertEqual(evaluate(x, inst).details['g_capability'], 0)
 
     def test_combined_objective_matches_report(self):
+        """Match the report normalization and additive search penalty."""
         x = np.full(2 * self.inst.n, 0.5)
         r = evaluate(x, self.inst)
         expected = 0.5*r.f1/self.inst.t_max + 0.5*r.f2/self.inst.battery.sum()
@@ -34,16 +38,19 @@ class TestSimulatedAnnealing(unittest.TestCase):
         self.assertGreaterEqual(sa_fitness(r, self.inst), expected)
 
     def test_common_battery_per_type(self):
+        """All vehicles of each type share the specified battery capacity."""
         inst = self.inst
         self.assertTrue(np.all(inst.battery[:inst.m_g] == inst.battery[0]))
         self.assertTrue(np.all(inst.battery[inst.m_g:] == inst.battery[inst.m_g]))
 
     def test_invalid_infinite_deadline_is_rejected(self):
+        """Reject infinite deadline normalization for the report objective."""
         inst = generate_instance(n=12, m_g=2, m_a=2, seed=0)
         with self.assertRaises(ValueError):
             simulated_annealing(inst, SAConfig(iterations=2))
 
     def test_sa_produces_feasible_nonworse_result(self):
+        """Retain a feasible incumbent and reproduce it with the same seed."""
         cfg = SAConfig(iterations=1000, construction_restarts=25)
         a = simulated_annealing(self.inst, cfg, seed=3)
         self.assertAlmostEqual(a.best_result.violation, 0.0)

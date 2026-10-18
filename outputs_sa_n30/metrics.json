@@ -16,61 +16,114 @@
   },
   "sa_config": {
     "iterations": 12000,
-    "initial_temperature": 0.08,
+    "initial_temperature": null,
     "cooling_rate": 0.9995,
     "penalty": 100.0,
     "alpha": 0.5,
-    "construction_restarts": 100
+    "construction_restarts": 100,
+    "final_temperature": 1e-05,
+    "derive_cooling": true,
+    "calibration_samples": 200,
+    "target_acceptance": 0.8,
+    "operators": [
+      "relocate",
+      "swap",
+      "two_opt",
+      "intra_swap",
+      "or_opt"
+    ],
+    "adaptive_operators": false,
+    "adaptive_penalty": false,
+    "stagnation_window": 1000,
+    "reheat": false,
+    "n_restarts": 1,
+    "acceptance_window": 100,
+    "hill_climbing": false
   },
   "results": {
-    "initial_F": 0.22690844777653563,
-    "best_F": 0.1790990501030665,
-    "improvement_percent": 21.06990644991448,
-    "makespan_seconds": 432.3148792412658,
-    "energy_kJ": 259.50440814117303,
+    "feasible": true,
+    "evaluations": 12299,
+    "best_chain": 0,
+    "operator_stats": {
+      "relocate": {
+        "attempt": 2271,
+        "accept": 689,
+        "improve": 330,
+        "failed": 0
+      },
+      "swap": {
+        "attempt": 2540,
+        "accept": 930,
+        "improve": 473,
+        "failed": 98
+      },
+      "two_opt": {
+        "attempt": 2462,
+        "accept": 1539,
+        "improve": 643,
+        "failed": 0
+      },
+      "intra_swap": {
+        "attempt": 2432,
+        "accept": 1420,
+        "improve": 608,
+        "failed": 0
+      },
+      "or_opt": {
+        "attempt": 2528,
+        "accept": 757,
+        "improve": 372,
+        "failed": 135
+      }
+    },
+    "initial_F": 0.23534597581714264,
+    "best_F": 0.17601140945225058,
+    "improvement_percent": 25.211634130933003,
+    "makespan_seconds": 432.5304751441426,
+    "energy_kJ": 245.66310030824962,
     "violation": 0.0,
-    "accepted_moves": 3960,
+    "accepted_moves": 5335,
     "attempted_moves": 12000,
-    "execution_seconds": 1.557693667,
+    "execution_seconds": 10.439202400040813,
     "routes": [
       [],
       [
+        18,
         21,
-        1,
-        18
+        22
       ],
       [
-        22,
-        8,
-        26,
-        20,
-        9,
-        14,
-        3,
         12,
-        29
+        15,
+        3,
+        14,
+        9,
+        20,
+        8,
+        1,
+        16
       ],
       [
         13,
-        16,
-        15,
-        4,
-        5,
-        19,
-        23,
-        25,
-        17
-      ],
-      [
-        27,
-        7,
-        6,
         28,
         30,
         2,
         11,
-        10,
-        24
+        25,
+        17,
+        24,
+        10
+      ],
+      [
+        26,
+        6,
+        7,
+        27,
+        4,
+        5,
+        19,
+        23,
+        29
       ]
     ],
     "constraints": {

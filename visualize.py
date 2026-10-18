@@ -85,18 +85,25 @@ def plot_routes(inst, result, destination):
 def plot_convergence(results, destination, log_y=False):
     """Show current penalized costs and feasible incumbent mean +/- one SD."""
     results = results if isinstance(results, list) else [results]
-    fig, ax = plt.subplots(figsize=(9, 5), layout='constrained')
+    fig, (ax, current_ax) = plt.subplots(2, 1, figsize=(9, 7), sharex=True, layout='constrained')
     histories = np.array([r.best_history for r in results])
     finite = np.isfinite(histories)
     count = finite.sum(axis=0)
     mean = np.divide(np.nansum(histories, axis=0), count, out=np.full(histories.shape[1], np.nan), where=count > 0)
-    variance = np.divide(np.nansum((histories-mean)**2, axis=0), count, out=np.zeros_like(mean), where=count > 0)
+    variance = np.divide(np.nansum((histories-mean)**2, axis=0), np.maximum(count-1, 1), out=np.zeros_like(mean), where=count > 1)
     sd = np.sqrt(variance)
     x = np.arange(len(mean))
     ax.plot(x, mean, label='Best feasible F (mean)')
     ax.fill_between(x, mean-sd, mean+sd, alpha=.2, label='Across-seed SD')
-    ax.plot(results[0].current_history, alpha=.35, label='Current penalized cost (first seed)')
-    ax.set(xlabel='Iteration', ylabel='Cost', title='Convergence')
+    if not finite.any():
+        ax.text(.5, .5, 'No feasible incumbent found', ha='center', transform=ax.transAxes)
+    current_ax.plot(results[0].current_history, color='tab:orange', alpha=.8, label='Current penalized cost (first seed)')
+    if np.all(results[0].current_history > 0):
+        current_ax.set_yscale('log')
+    current_ax.set(xlabel='Iteration', ylabel='Penalized cost')
+    current_ax.legend()
+    current_ax.grid(alpha=.2)
+    ax.set(ylabel='Feasible objective F', title='Convergence')
     if log_y:
         ax.set_yscale('log')
     ax.legend()

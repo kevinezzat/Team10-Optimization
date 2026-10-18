@@ -4,13 +4,8 @@ import json
 from pathlib import Path
 import time
 
-import matplotlib
-matplotlib.use("Agg")
-import matplotlib.pyplot as plt
-import numpy as np
-
 from fitness import combined_objective
-from instance import ANY, UAV_ONLY, UGV_ONLY, generate_instance
+from instance import generate_instance
 from sa import SAConfig, simulated_annealing
 
 

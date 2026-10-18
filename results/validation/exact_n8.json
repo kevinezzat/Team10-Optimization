@@ -1,0 +1,57 @@
+{
+  "summary": {
+    "n": 8,
+    "instance_seed": 18,
+    "exact_F": 0.3206475132307909,
+    "exact_seconds": 1.2283566999831237,
+    "gap_best": 0.0,
+    "gap_mean": 5.551115123125783e-15,
+    "gap_worst": 2.220446049250313e-14,
+    "hit_fraction": 1.0,
+    "sa_seconds_mean": 1.5343736049951986
+  },
+  "routes": [
+    [
+      8
+    ],
+    [
+      6,
+      1,
+      4
+    ],
+    [
+      2,
+      5
+    ],
+    [
+      3,
+      7
+    ]
+  ],
+  "config": {
+    "iterations": 2000,
+    "initial_temperature": null,
+    "cooling_rate": 0.9995,
+    "penalty": 100.0,
+    "alpha": 0.5,
+    "construction_restarts": 10,
+    "final_temperature": 1e-05,
+    "derive_cooling": true,
+    "calibration_samples": 200,
+    "target_acceptance": 0.8,
+    "operators": [
+      "relocate",
+      "swap",
+      "two_opt",
+      "intra_swap",
+      "or_opt"
+    ],
+    "adaptive_operators": false,
+    "adaptive_penalty": false,
+    "stagnation_window": 1000,
+    "reheat": false,
+    "n_restarts": 1,
+    "acceptance_window": 100,
+    "hill_climbing": false
+  }
+}

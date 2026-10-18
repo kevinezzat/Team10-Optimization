@@ -65,7 +65,7 @@ class TestIncremental(unittest.TestCase):
     def test_config(self):
         """Invalid numerical and neighborhood settings fail before running."""
         for kwargs in ({'iterations': 0}, {'penalty': np.nan}, {'alpha': 2},
-                       {'initial_temperature': 0}, {'operators': ()}, {'n_restarts': -1}):
+                       {'initial_temperature': 0}, {'initial_temperature': 1e-6}, {'operators': ()}, {'n_restarts': -1}):
             with self.assertRaises(ValueError):
                 SAConfig(**kwargs)
 

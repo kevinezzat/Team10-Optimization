@@ -1,5 +1,6 @@
 """Exact gaps and paired baseline comparisons without external statistics packages."""
 import argparse
+import json
 from concurrent.futures import ProcessPoolExecutor
 from dataclasses import replace
 from math import comb
@@ -79,11 +80,25 @@ def main():
     parser.add_argument('--output', type=Path, default=Path('results/validation'))
     parser.add_argument('--skip-baselines', action='store_true')
     parser.add_argument('--workers', type=int, default=1)
+    parser.add_argument('--resume', action='store_true')
     args = parser.parse_args()
+    if args.seeds < 1 or args.workers < 1:
+        parser.error('seeds and workers must be positive')
     args.output.mkdir(parents=True, exist_ok=True)
     gaps = []
     for n in (6, 7, 8, 9):
         inst = generate_instance(n=n, m_g=1 if n < 8 else 2, m_a=1 if n < 8 else 2, seed=10+n, t_max=1800)
+        saved = args.output/f'exact_n{n}.json'
+        if args.resume and saved.exists():
+            cached = json.loads(saved.read_text())
+            import csv
+            with (args.output/f'exact_n{n}_runs.csv').open(newline='') as stream:
+                count = len(list(csv.DictReader(stream)))
+            if count == args.seeds and cached['config']['iterations'] == args.iterations:
+                gaps.append(cached['summary'])
+                write_csv(args.output/'exact_gaps.csv', gaps)
+                print(f'n={n}: reused completed exact comparison', flush=True)
+                continue
         optimum, exact_time = exact_solve(inst)
         if optimum is None:
             raise AssertionError('tiny validation instance is infeasible')
@@ -107,15 +122,23 @@ def main():
         inst = make_case(name)
         config = SAConfig(iterations=args.iterations, construction_restarts=1)
         all_rows = {name: [] for name in ('sa', 'random', 'greedy', 'hill')}
-        jobs = [(inst, config, seed) for seed in range(args.seeds)]
-        if args.workers > 1:
-            with ProcessPoolExecutor(max_workers=args.workers) as pool:
-                outcomes = list(pool.map(baseline_job, jobs))
+        signature = dict(case=list(CASES[name]), config=config.to_dict(), seeds=args.seeds)
+        signature = json.loads(json.dumps(signature))
+        checkpoint = args.output/f'{name}_checkpoint.json'
+        cached = json.loads(checkpoint.read_text()) if args.resume and checkpoint.exists() else None
+        if cached is not None and cached['signature'] == signature:
+            all_rows = cached['rows']
         else:
-            outcomes = list(map(baseline_job, jobs))
-        for outcome in outcomes:
-            for algorithm, row in outcome.items():
-                all_rows[algorithm].append(row)
+            jobs = [(inst, config, seed) for seed in range(args.seeds)]
+            if args.workers > 1:
+                with ProcessPoolExecutor(max_workers=args.workers) as pool:
+                    outcomes = list(pool.map(baseline_job, jobs))
+            else:
+                outcomes = list(map(baseline_job, jobs))
+            for outcome in outcomes:
+                for algorithm, row in outcome.items():
+                    all_rows[algorithm].append(row)
+            write_json(checkpoint, dict(signature=signature, rows=all_rows))
         print(name, 'all paired seeds complete', flush=True)
         for algorithm, rows in all_rows.items():
             write_csv(args.output/f'{name}_{algorithm}.csv', rows)

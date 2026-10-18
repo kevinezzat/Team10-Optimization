@@ -5,7 +5,7 @@ import csv
 import json
 import numpy as np
 from fitness import combined_objective, evaluate
-from sa import SAConfig, simulated_annealing
+from sa import simulated_annealing
 
 
 def write_json(path, data):

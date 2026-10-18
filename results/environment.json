@@ -1,0 +1,7 @@
+{
+  "python": "3.10.11 (tags/v3.10.11:7d4cc5a, Apr  5 2023, 00:38:17) [MSC v.1929 64 bit (AMD64)]",
+  "numpy": "2.2.6",
+  "matplotlib": "3.10.9",
+  "platform": "Windows-10-10.0.26200-SP0",
+  "note": "Wall times include concurrent experiment load and are machine-specific."
+}

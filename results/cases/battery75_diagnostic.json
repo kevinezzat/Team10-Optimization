@@ -1,0 +1,229 @@
+{
+  "purpose": "Supplemental fixed-seed longer-budget diagnostic; does not replace ten-seed main study",
+  "instance_seed": 0,
+  "sa_seed": 0,
+  "config": {
+    "iterations": 60000,
+    "initial_temperature": null,
+    "cooling_rate": 0.9995,
+    "penalty": 100.0,
+    "alpha": 0.5,
+    "construction_restarts": 100,
+    "final_temperature": 1e-05,
+    "derive_cooling": true,
+    "calibration_samples": 200,
+    "target_acceptance": 0.8,
+    "operators": [
+      "relocate",
+      "swap",
+      "two_opt",
+      "intra_swap",
+      "or_opt"
+    ],
+    "adaptive_operators": false,
+    "adaptive_penalty": false,
+    "stagnation_window": 1000,
+    "reheat": false,
+    "n_restarts": 1,
+    "acceptance_window": 100,
+    "hill_climbing": false
+  },
+  "feasible": true,
+  "violation": 0.0,
+  "F": 0.6049437951366796,
+  "routes": [
+    [
+      25,
+      49,
+      34,
+      37,
+      39,
+      46,
+      14,
+      48,
+      50,
+      69,
+      67,
+      58,
+      41
+    ],
+    [
+      28,
+      11,
+      2,
+      30,
+      35,
+      20,
+      70,
+      40,
+      62,
+      9
+    ],
+    [
+      1,
+      8,
+      26,
+      64,
+      72,
+      59,
+      27,
+      60,
+      7,
+      6,
+      57,
+      56,
+      51,
+      31,
+      61,
+      53,
+      24
+    ],
+    [
+      4,
+      3,
+      52,
+      44,
+      36,
+      5,
+      19,
+      54,
+      73,
+      23,
+      17,
+      45,
+      74,
+      47,
+      55,
+      32
+    ],
+    [
+      63,
+      65,
+      68,
+      10
+    ],
+    [
+      22,
+      66,
+      15,
+      12,
+      71
+    ],
+    [
+      38,
+      18,
+      21,
+      13,
+      16
+    ],
+    [
+      33,
+      43,
+      75,
+      29,
+      42
+    ]
+  ],
+  "wall_time": 54.798231999971904,
+  "constraints": {
+    "g_capability": 0.0,
+    "g_payload": 0.0,
+    "g_energy": 0.0,
+    "g_deadline": 0.0
+  },
+  "initial_F": 0.6581504531775668,
+  "initial_violation": 0.09492856730398318,
+  "initial_routes": [
+    [
+      16,
+      26,
+      72,
+      60,
+      27,
+      59,
+      7,
+      57,
+      56,
+      35,
+      28,
+      30,
+      2,
+      11,
+      65,
+      63,
+      68,
+      10
+    ],
+    [
+      70,
+      62,
+      48,
+      14,
+      46,
+      52,
+      39,
+      54,
+      47,
+      17
+    ],
+    [
+      42,
+      3,
+      44,
+      36,
+      5,
+      19,
+      29,
+      75,
+      37,
+      73,
+      23,
+      34,
+      49,
+      25,
+      74,
+      55,
+      45,
+      24,
+      53
+    ],
+    [
+      66,
+      50,
+      69,
+      9,
+      58,
+      20,
+      64,
+      6,
+      8,
+      1,
+      51,
+      31,
+      61
+    ],
+    [
+      33,
+      32
+    ],
+    [
+      67,
+      40,
+      41
+    ],
+    [
+      38,
+      22,
+      21,
+      18,
+      13,
+      15,
+      12,
+      71
+    ],
+    [
+      43,
+      4
+    ]
+  ]
+}

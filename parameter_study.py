@@ -9,7 +9,7 @@ import numpy as np
 from experiments import run_one, summarize, write_csv, write_json
 from run_cases import make_case
 from sa import SAConfig
-from visualize import save
+from visualize import save, spread_labels
 import matplotlib.pyplot as plt
 
 
@@ -39,8 +39,8 @@ def main():
     parser.add_argument('--resume', action='store_true')
     parser.add_argument('--output', type=Path, default=Path('results/parameters'))
     args = parser.parse_args()
-    if args.seeds < 1:
-        parser.error('seeds must be positive')
+    if args.seeds < 1 or args.workers < 1:
+        parser.error('seeds and workers must be positive')
     args.output.mkdir(parents=True, exist_ok=True)
     inst = make_case('reference30')
     base = SAConfig(iterations=args.iterations, construction_restarts=10)
@@ -90,6 +90,13 @@ def main():
             best = min(feasible, key=lambda r: (-r['feasibility_rate'], r['F_mean']))
             worst = max(feasible, key=lambda r: r['F_mean'])
             findings.append(f"- {factor}: lowest observed mean F at {best['setting']} ({best['F_mean']:.6f} ± {best['F_std']:.6f}); highest at {worst['setting']} ({worst['F_mean']:.6f}). These descriptive rankings are not significance tests.")
+    for factor, rows in groups.items():
+        if factor in ('alpha', 'ablation', 'factorial'):
+            continue
+        eligible = [r for r in rows if r['F_mean'] is not None]
+        if eligible:
+            selected = min(eligible, key=lambda r: (-r['feasibility_rate'], r['F_mean']))
+            findings.append(f"Quality-oriented recommendation for this instance: {factor}={selected['setting']}; mean runtime {selected['runtime_mean']:.2f}s, feasibility {selected['feasibility_rate']:.0%}. This setting was tested individually, not jointly with the other recommendations.")
     alpha_rows = groups['alpha']
     points = np.array([[r['makespan_mean'], r['energy_mean']] for r in alpha_rows], dtype=float)
     nondominated = [i for i, p in enumerate(points) if np.isfinite(p).all() and not any(
@@ -97,10 +104,12 @@ def main():
     fig, ax = plt.subplots(figsize=(8, 6), layout='constrained')
     ax.scatter(points[:, 0], points[:, 1], label='Mean by alpha')
     ax.scatter(points[nondominated, 0], points[nondominated, 1], facecolors='none', edgecolors='red', s=130, label='Nondominated means')
+    alpha_labels = []
     for row, point in zip(alpha_rows, points):
-        ax.annotate(row['setting'], point, xytext=(4, 4), textcoords='offset points')
+        alpha_labels.append(ax.annotate(row['setting'], point, xytext=(4, 4), textcoords='offset points'))
     ax.set(xlabel='Makespan [s]', ylabel='Energy [kJ]', title='Observed trade-off (means, not a proven Pareto front)')
     ax.legend()
+    spread_labels(fig, alpha_labels)
     save(fig, args.output/'pareto.png')
     findings += ['', 'Recommendations should balance the measured runtime and feasibility against F. Keep alpha tied to mission priorities; this single-instance study does not establish universal defaults.']
     (args.output/'findings.md').write_text('\n'.join(findings)+'\n', encoding='utf-8')

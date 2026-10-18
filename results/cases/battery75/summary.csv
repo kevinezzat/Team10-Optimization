@@ -1,0 +1,2 @@
+case,n,ugvs,uavs,runs,feasibility_rate,F_best,F_mean,F_std,F_median,makespan_best,makespan_mean,makespan_std,makespan_median,energy_best,energy_mean,energy_std,energy_median,runtime_best,runtime_mean,runtime_std,runtime_median,evaluations_best,evaluations_mean,evaluations_std,evaluations_median
+battery75,75,4,4,10,0.0,,,,,,,,,,,,,10.134437300032005,10.550505160010653,0.2589071849141574,10.608344100008253,12208.0,12209.1,0.7378647873726218,12209.0

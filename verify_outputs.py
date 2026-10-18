@@ -1,5 +1,6 @@
 """Audit completed experiment artifacts, feasible routes and image contents."""
 import json
+import csv
 from pathlib import Path
 import numpy as np
 import matplotlib
@@ -8,7 +9,8 @@ import matplotlib.image as mpimg
 from experiments import write_json
 from fitness import combined_objective, evaluate
 from instance import Instance
-from sa import encode_routes
+from sa import SAConfig, encode_routes
+from parameter_study import settings
 from run_cases import CASES
 
 
@@ -35,10 +37,33 @@ def main():
         result = evaluate(encode_routes(data['best_routes'], inst), inst)
         best_run = next(r for r in data['runs'] if r['seed'] == data['best_seed'])
         assert abs(combined_objective(result, inst, data['config']['alpha'])-best_run['F']) <= 1e-9
+        assert abs(result.violation-best_run['violation']) <= 1e-9
         if best_run['feasible']:
             assert result.violation <= 1e-9
         assert len(data['runs']) >= 10
         checked_cases.append(dict(case=name, feasible=best_run['feasible'], violation=result.violation))
+    for name in CASES:
+        budgets = []
+        for algorithm in ('sa', 'random', 'greedy', 'hill'):
+            path = Path('results/validation')/f'{name}_{algorithm}.csv'
+            with path.open(newline='') as stream:
+                rows = list(csv.DictReader(stream))
+            assert len(rows) >= 20, f'incomplete baseline: {path}'
+            budgets.append([int(row['evaluations']) for row in rows])
+            required.append(path)
+        assert all(budget == budgets[0] for budget in budgets), f'budget mismatch: {name}'
+    for n in (6, 7, 8, 9):
+        path = Path('results/validation')/f'exact_n{n}_runs.csv'
+        with path.open(newline='') as stream:
+            assert len(list(csv.DictReader(stream))) >= 20
+        required.append(path)
+    for factor, value, _ in settings(SAConfig(construction_restarts=10)):
+        slug = value.replace(',', '_').replace('=', '-')
+        path = Path('results/parameters')/f'{factor}_{slug}_runs.csv'
+        with path.open(newline='') as stream:
+            assert len(list(csv.DictReader(stream))) >= 10, f'incomplete sweep: {path}'
+        required.extend([path, Path('results/parameters')/f'{factor}.csv',
+                         Path('results/parameters')/f'{factor}.png'])
     for path in required:
         assert path.is_file() and path.stat().st_size > 0, f'missing/empty: {path}'
     images = []
