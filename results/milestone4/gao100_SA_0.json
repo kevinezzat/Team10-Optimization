@@ -1,0 +1,163 @@
+{
+  "metrics": {
+    "case": "gao100",
+    "algorithm": "SA",
+    "seed": 0,
+    "feasible": true,
+    "objective": 0.4953228515734275,
+    "makespan": 1293.4813270972968,
+    "energy": 1606.111036292414,
+    "violation": 0.0,
+    "seconds": 4.475394200067967,
+    "evaluations": 3000,
+    "gap_percent": null
+  },
+  "routes": [
+    [
+      19,
+      5,
+      39,
+      44,
+      89,
+      95
+    ],
+    [
+      81,
+      21,
+      72,
+      27,
+      64,
+      40,
+      85,
+      12
+    ],
+    [
+      66,
+      51,
+      35,
+      33,
+      94,
+      23
+    ],
+    [
+      41,
+      86,
+      65
+    ],
+    [
+      28,
+      30,
+      76,
+      32,
+      17,
+      53
+    ],
+    [
+      45,
+      77,
+      63,
+      62,
+      100,
+      58,
+      83,
+      60,
+      87,
+      84,
+      22,
+      69,
+      50,
+      14
+    ],
+    [
+      92,
+      68,
+      93,
+      80,
+      59,
+      48,
+      90,
+      54,
+      9,
+      13,
+      10,
+      2,
+      11,
+      56,
+      3,
+      52
+    ],
+    [
+      1,
+      4,
+      37,
+      99,
+      55,
+      97,
+      6,
+      57,
+      79,
+      26,
+      98,
+      71,
+      31,
+      18
+    ],
+    [
+      8,
+      20,
+      70,
+      42,
+      96,
+      25,
+      49,
+      82,
+      73,
+      75,
+      78,
+      43,
+      29,
+      61
+    ],
+    [
+      46,
+      15,
+      88,
+      91,
+      7,
+      67,
+      16,
+      38,
+      24,
+      74,
+      47,
+      34,
+      36
+    ]
+  ],
+  "config": {
+    "iterations": 2920,
+    "initial_temperature": null,
+    "cooling_rate": 0.9995,
+    "penalty": 100.0,
+    "alpha": 0.5,
+    "construction_restarts": 60,
+    "final_temperature": 1e-05,
+    "derive_cooling": true,
+    "calibration_samples": 20,
+    "target_acceptance": 0.8,
+    "operators": [
+      "relocate",
+      "swap",
+      "two_opt",
+      "intra_swap",
+      "or_opt"
+    ],
+    "adaptive_operators": false,
+    "adaptive_penalty": false,
+    "stagnation_window": 1000,
+    "reheat": false,
+    "n_restarts": 1,
+    "acceptance_window": 100,
+    "hill_climbing": false
+  }
+}

@@ -1,0 +1,153 @@
+{
+  "metrics": {
+    "case": "restricted90",
+    "algorithm": "SA",
+    "seed": 0,
+    "feasible": true,
+    "objective": 0.5480503927719633,
+    "makespan": 1522.6740756978786,
+    "energy": 1424.4767165028775,
+    "violation": 0.0,
+    "seconds": 4.703867899952456,
+    "evaluations": 3000,
+    "gap_percent": null
+  },
+  "routes": [
+    [
+      12,
+      40,
+      18,
+      76,
+      11
+    ],
+    [
+      71,
+      36,
+      3,
+      62,
+      85,
+      20,
+      64,
+      79,
+      27,
+      60,
+      8,
+      22
+    ],
+    [
+      28,
+      87,
+      13,
+      66
+    ],
+    [
+      4,
+      49,
+      47,
+      45,
+      77,
+      78
+    ],
+    [
+      41,
+      69,
+      90,
+      88,
+      89,
+      39,
+      19,
+      82,
+      24,
+      61,
+      10
+    ],
+    [
+      86,
+      84,
+      17,
+      53,
+      65,
+      38
+    ],
+    [
+      37,
+      73,
+      58,
+      72,
+      83,
+      52,
+      44,
+      5,
+      14,
+      48,
+      63,
+      2,
+      35
+    ],
+    [
+      74,
+      55,
+      25,
+      23,
+      9,
+      70,
+      59,
+      7,
+      80,
+      67
+    ],
+    [
+      21,
+      26,
+      1,
+      51,
+      68,
+      32,
+      33,
+      29,
+      54,
+      42
+    ],
+    [
+      81,
+      30,
+      6,
+      57,
+      16,
+      50,
+      46,
+      15,
+      43,
+      34,
+      75,
+      31,
+      56
+    ]
+  ],
+  "config": {
+    "iterations": 2920,
+    "initial_temperature": null,
+    "cooling_rate": 0.9995,
+    "penalty": 100.0,
+    "alpha": 0.5,
+    "construction_restarts": 60,
+    "final_temperature": 1e-05,
+    "derive_cooling": true,
+    "calibration_samples": 20,
+    "target_acceptance": 0.8,
+    "operators": [
+      "relocate",
+      "swap",
+      "two_opt",
+      "intra_swap",
+      "or_opt"
+    ],
+    "adaptive_operators": false,
+    "adaptive_penalty": false,
+    "stagnation_window": 1000,
+    "reheat": false,
+    "n_restarts": 1,
+    "acceptance_window": 100,
+    "hill_climbing": false
+  }
+}

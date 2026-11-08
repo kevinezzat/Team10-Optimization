@@ -1,0 +1,153 @@
+{
+  "metrics": {
+    "case": "restricted90",
+    "algorithm": "SA",
+    "seed": 4,
+    "feasible": true,
+    "objective": 0.567981635052337,
+    "makespan": 1563.3998939385192,
+    "energy": 1522.6246754904212,
+    "violation": 0.0,
+    "seconds": 3.674767900025472,
+    "evaluations": 3000,
+    "gap_percent": null
+  },
+  "routes": [
+    [
+      28,
+      27,
+      60,
+      79,
+      40,
+      62,
+      8,
+      22
+    ],
+    [
+      24,
+      77,
+      49,
+      82,
+      19,
+      39,
+      36,
+      4,
+      66
+    ],
+    [
+      61,
+      76,
+      47,
+      45,
+      78,
+      89,
+      44,
+      71
+    ],
+    [
+      11,
+      87,
+      18,
+      88,
+      3
+    ],
+    [
+      41,
+      12,
+      69,
+      90,
+      85,
+      20,
+      64,
+      13,
+      10
+    ],
+    [
+      9,
+      70,
+      72,
+      56,
+      67,
+      46,
+      48,
+      14,
+      50
+    ],
+    [
+      26,
+      83,
+      58,
+      15,
+      29,
+      33,
+      34,
+      55,
+      74,
+      43
+    ],
+    [
+      42,
+      75,
+      6,
+      7,
+      59,
+      1,
+      21,
+      68,
+      32,
+      57,
+      80,
+      38
+    ],
+    [
+      25,
+      17,
+      63,
+      16,
+      51,
+      31,
+      35,
+      65,
+      2,
+      30,
+      81
+    ],
+    [
+      53,
+      84,
+      23,
+      86,
+      52,
+      5,
+      73,
+      54,
+      37
+    ]
+  ],
+  "config": {
+    "iterations": 2920,
+    "initial_temperature": null,
+    "cooling_rate": 0.9995,
+    "penalty": 100.0,
+    "alpha": 0.5,
+    "construction_restarts": 60,
+    "final_temperature": 1e-05,
+    "derive_cooling": true,
+    "calibration_samples": 20,
+    "target_acceptance": 0.8,
+    "operators": [
+      "relocate",
+      "swap",
+      "two_opt",
+      "intra_swap",
+      "or_opt"
+    ],
+    "adaptive_operators": false,
+    "adaptive_penalty": false,
+    "stagnation_window": 1000,
+    "reheat": false,
+    "n_restarts": 1,
+    "acceptance_window": 100,
+    "hill_climbing": false
+  }
+}

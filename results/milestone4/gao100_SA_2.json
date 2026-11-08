@@ -1,0 +1,163 @@
+{
+  "metrics": {
+    "case": "gao100",
+    "algorithm": "SA",
+    "seed": 2,
+    "feasible": true,
+    "objective": 0.4382102712153958,
+    "makespan": 1131.2762216878318,
+    "energy": 1463.7621948000683,
+    "violation": 0.0,
+    "seconds": 4.661177099915221,
+    "evaluations": 3000,
+    "gap_percent": null
+  },
+  "routes": [
+    [
+      66,
+      71,
+      19,
+      94,
+      76
+    ],
+    [
+      53,
+      33,
+      23,
+      86,
+      39,
+      89,
+      44
+    ],
+    [
+      35,
+      51,
+      22,
+      85,
+      40
+    ],
+    [
+      7,
+      27,
+      72,
+      64,
+      41,
+      12,
+      95
+    ],
+    [
+      31,
+      28,
+      30,
+      65,
+      32,
+      17
+    ],
+    [
+      78,
+      49,
+      25,
+      34,
+      73,
+      84,
+      37,
+      5,
+      54,
+      36,
+      69,
+      48,
+      88,
+      13,
+      75
+    ],
+    [
+      1,
+      8,
+      80,
+      6,
+      91,
+      87,
+      99,
+      74,
+      58,
+      20,
+      70,
+      93,
+      97,
+      9,
+      67
+    ],
+    [
+      57,
+      60,
+      56,
+      61,
+      96,
+      63,
+      2,
+      92,
+      24,
+      45,
+      46,
+      14,
+      18,
+      21
+    ],
+    [
+      79,
+      59,
+      83,
+      98,
+      100,
+      52,
+      42,
+      47,
+      38,
+      10
+    ],
+    [
+      68,
+      81,
+      43,
+      50,
+      3,
+      90,
+      62,
+      16,
+      4,
+      82,
+      55,
+      77,
+      11,
+      26,
+      15,
+      29
+    ]
+  ],
+  "config": {
+    "iterations": 2920,
+    "initial_temperature": null,
+    "cooling_rate": 0.9995,
+    "penalty": 100.0,
+    "alpha": 0.5,
+    "construction_restarts": 60,
+    "final_temperature": 1e-05,
+    "derive_cooling": true,
+    "calibration_samples": 20,
+    "target_acceptance": 0.8,
+    "operators": [
+      "relocate",
+      "swap",
+      "two_opt",
+      "intra_swap",
+      "or_opt"
+    ],
+    "adaptive_operators": false,
+    "adaptive_penalty": false,
+    "stagnation_window": 1000,
+    "reheat": false,
+    "n_restarts": 1,
+    "acceptance_window": 100,
+    "hill_climbing": false
+  }
+}

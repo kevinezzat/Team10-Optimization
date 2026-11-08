@@ -1,3 +1,11 @@
+# Milestone 4 upgrade
+
+- Added a hand-written GA with tournament selection, uniform crossover, mutation, capability repair and elitism.
+- Added 125 recorded experiment runs, exact small-case validation, SA comparisons and parameter studies.
+- Added route, convergence and comparison figures, working HTML report, and a GA chapter in the existing LaTeX report.
+- Added GA tests; all 16 tests pass.
+- See MILESTONE4_GUIDE.md for reproduction and remaining submission work.
+
 # Milestone 3 upgrade
 
 ## Baseline (2026-10-18)

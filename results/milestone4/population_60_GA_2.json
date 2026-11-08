@@ -1,0 +1,65 @@
+{
+  "metrics": {
+    "case": "population_60",
+    "algorithm": "GA",
+    "seed": 2,
+    "feasible": true,
+    "objective": 0.20319133196016598,
+    "makespan": 484.039107880707,
+    "energy": 302.2677952294852,
+    "violation": 0.0,
+    "seconds": 1.4183448000112548,
+    "evaluations": 3000,
+    "gap_percent": null
+  },
+  "routes": [
+    [],
+    [
+      22,
+      1,
+      18
+    ],
+    [
+      21,
+      6,
+      27,
+      12,
+      4,
+      5,
+      25,
+      24
+    ],
+    [
+      17,
+      23,
+      29,
+      19,
+      3,
+      14,
+      15,
+      9,
+      8
+    ],
+    [
+      10,
+      28,
+      30,
+      11,
+      2,
+      7,
+      26,
+      20,
+      16,
+      13
+    ]
+  ],
+  "config": {
+    "population": 60,
+    "evaluations": 3000,
+    "crossover": 0.9,
+    "mutation": 0.05,
+    "elite": 2,
+    "tournament": 3,
+    "alpha": 0.5
+  }
+}

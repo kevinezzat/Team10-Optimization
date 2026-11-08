@@ -1,0 +1,153 @@
+{
+  "metrics": {
+    "case": "restricted90",
+    "algorithm": "SA",
+    "seed": 3,
+    "feasible": true,
+    "objective": 0.5561543380669673,
+    "makespan": 1539.8102248510165,
+    "energy": 1462.5572140818306,
+    "violation": 0.0,
+    "seconds": 3.9773805999429896,
+    "evaluations": 3000,
+    "gap_percent": null
+  },
+  "routes": [
+    [
+      41,
+      85,
+      62,
+      69,
+      4,
+      19,
+      61
+    ],
+    [
+      13,
+      40,
+      20,
+      64,
+      27,
+      60,
+      8,
+      28,
+      10
+    ],
+    [
+      82,
+      36,
+      39,
+      89,
+      90,
+      88,
+      3,
+      12,
+      18
+    ],
+    [
+      47,
+      71,
+      66,
+      79,
+      22
+    ],
+    [
+      78,
+      49,
+      45,
+      77,
+      24,
+      76,
+      11,
+      87
+    ],
+    [
+      55,
+      32,
+      65,
+      31,
+      7,
+      83,
+      80,
+      6,
+      56,
+      38
+    ],
+    [
+      29,
+      73,
+      42,
+      58,
+      15,
+      67,
+      72,
+      21
+    ],
+    [
+      53,
+      68,
+      81,
+      57,
+      59,
+      70,
+      26,
+      1,
+      16,
+      75,
+      34
+    ],
+    [
+      46,
+      14,
+      48,
+      50,
+      9,
+      52,
+      44,
+      37,
+      5,
+      54,
+      23,
+      86,
+      17,
+      74
+    ],
+    [
+      63,
+      2,
+      30,
+      35,
+      51,
+      84,
+      33,
+      25,
+      43
+    ]
+  ],
+  "config": {
+    "iterations": 2920,
+    "initial_temperature": null,
+    "cooling_rate": 0.9995,
+    "penalty": 100.0,
+    "alpha": 0.5,
+    "construction_restarts": 60,
+    "final_temperature": 1e-05,
+    "derive_cooling": true,
+    "calibration_samples": 20,
+    "target_acceptance": 0.8,
+    "operators": [
+      "relocate",
+      "swap",
+      "two_opt",
+      "intra_swap",
+      "or_opt"
+    ],
+    "adaptive_operators": false,
+    "adaptive_penalty": false,
+    "stagnation_window": 1000,
+    "reheat": false,
+    "n_restarts": 1,
+    "acceptance_window": 100,
+    "hill_climbing": false
+  }
+}

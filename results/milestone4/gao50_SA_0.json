@@ -1,0 +1,105 @@
+{
+  "metrics": {
+    "case": "gao50",
+    "algorithm": "SA",
+    "seed": 0,
+    "feasible": true,
+    "objective": 0.5871883884553655,
+    "makespan": 1149.9123932998234,
+    "energy": 719.3548577795542,
+    "violation": 0.0,
+    "seconds": 4.079622299992479,
+    "evaluations": 3000,
+    "gap_percent": null
+  },
+  "routes": [
+    [
+      31,
+      6,
+      8,
+      26,
+      20,
+      16
+    ],
+    [
+      10,
+      32,
+      47,
+      49,
+      34,
+      23,
+      29
+    ],
+    [
+      12,
+      15,
+      14,
+      46,
+      3,
+      4
+    ],
+    [
+      13,
+      27,
+      44,
+      39,
+      33
+    ],
+    [
+      24,
+      11,
+      2,
+      30,
+      28,
+      35,
+      18,
+      1,
+      22,
+      41,
+      9,
+      42,
+      36,
+      5,
+      37
+    ],
+    [
+      43,
+      17,
+      45,
+      25,
+      19,
+      48,
+      50,
+      40,
+      7,
+      21,
+      38
+    ]
+  ],
+  "config": {
+    "iterations": 2920,
+    "initial_temperature": null,
+    "cooling_rate": 0.9995,
+    "penalty": 100.0,
+    "alpha": 0.5,
+    "construction_restarts": 60,
+    "final_temperature": 1e-05,
+    "derive_cooling": true,
+    "calibration_samples": 20,
+    "target_acceptance": 0.8,
+    "operators": [
+      "relocate",
+      "swap",
+      "two_opt",
+      "intra_swap",
+      "or_opt"
+    ],
+    "adaptive_operators": false,
+    "adaptive_penalty": false,
+    "stagnation_window": 1000,
+    "reheat": false,
+    "n_restarts": 1,
+    "acceptance_window": 100,
+    "hill_climbing": false
+  }
+}

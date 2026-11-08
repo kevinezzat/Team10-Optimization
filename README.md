@@ -1,6 +1,6 @@
-# Heterogeneous UAV–UGV cooperative task allocation and routing
+# Heterogeneous UAVâ€“UGV cooperative task allocation and routing
 
-MCTR 1021, German University in Cairo — Team 10. The Milestone 2 random-key model
+MCTR 1021, German University in Cairo â€” Team 10. The Milestone 2 random-key model
 is preserved, with a Milestone 3 simulated annealing solver and reproducible
 validation, case studies and parameter analysis. NumPy and Matplotlib are the
 only direct dependencies.
@@ -31,3 +31,7 @@ Read [HOW_TO_RUN.md](HOW_TO_RUN.md), [algorithm details](docs/sa_description.md)
 
 Results concern these instances and budgets, not universal SA superiority.
 CVRP data are explicitly synthetic; literature labels denote scale matching only.
+
+## Milestone 4
+
+See [Milestone 4 guide](MILESTONE4_GUIDE.md) for the GA and comparison study. Run `python run_milestone4.py` to reproduce the experiments. Measured results are in [results/milestone4](results/milestone4), and the full report entry point is `Optimization_Report/GUC_Thesis.tex`. The report includes `chapters/milestone4.tex` and its figures.

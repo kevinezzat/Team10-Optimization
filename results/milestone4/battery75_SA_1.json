@@ -1,0 +1,134 @@
+{
+  "metrics": {
+    "case": "battery75",
+    "algorithm": "SA",
+    "seed": 1,
+    "feasible": false,
+    "objective": null,
+    "makespan": 1931.0923782070695,
+    "energy": 1109.0327009119464,
+    "violation": 0.10379748124814442,
+    "seconds": 7.866145000094548,
+    "evaluations": 3000,
+    "gap_percent": null
+  },
+  "routes": [
+    [
+      67,
+      62,
+      70,
+      59,
+      27,
+      7,
+      57,
+      56,
+      35,
+      28,
+      30,
+      2,
+      11,
+      63,
+      10
+    ],
+    [
+      32,
+      55,
+      74,
+      25,
+      23,
+      19,
+      5,
+      39,
+      36,
+      44,
+      52,
+      3,
+      46,
+      14,
+      4
+    ],
+    [
+      58,
+      50,
+      69,
+      9,
+      20,
+      64,
+      72,
+      60,
+      6,
+      8,
+      1,
+      51,
+      31,
+      61
+    ],
+    [
+      68,
+      65,
+      47,
+      49,
+      34,
+      73,
+      37,
+      54,
+      48
+    ],
+    [
+      40,
+      41,
+      66
+    ],
+    [
+      53,
+      24,
+      17,
+      45,
+      33
+    ],
+    [
+      71,
+      12,
+      15,
+      42,
+      75,
+      29,
+      43
+    ],
+    [
+      38,
+      18,
+      22,
+      21,
+      26,
+      16,
+      13
+    ]
+  ],
+  "config": {
+    "iterations": 2920,
+    "initial_temperature": null,
+    "cooling_rate": 0.9995,
+    "penalty": 100.0,
+    "alpha": 0.5,
+    "construction_restarts": 60,
+    "final_temperature": 1e-05,
+    "derive_cooling": true,
+    "calibration_samples": 20,
+    "target_acceptance": 0.8,
+    "operators": [
+      "relocate",
+      "swap",
+      "two_opt",
+      "intra_swap",
+      "or_opt"
+    ],
+    "adaptive_operators": false,
+    "adaptive_penalty": false,
+    "stagnation_window": 1000,
+    "reheat": false,
+    "n_restarts": 1,
+    "acceptance_window": 100,
+    "hill_climbing": false
+  }
+}
